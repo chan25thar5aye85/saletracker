@@ -2,7 +2,6 @@ package com.hninakari.saletracker.ui.navigation
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -18,10 +17,15 @@ import com.hninakari.saletracker.core.UserPreferences
 import com.hninakari.saletracker.data.model.*
 import com.hninakari.saletracker.data.repository.*
 import com.hninakari.saletracker.ui.components.AppBottomBar
+import com.hninakari.saletracker.ui.components.AppDrawer
 import com.hninakari.saletracker.ui.components.AppTopBar
 import com.hninakari.saletracker.ui.components.SuccessDialogs
 import com.hninakari.saletracker.ui.screen.*
 import com.hninakari.saletracker.viewmodel.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -44,6 +48,10 @@ fun AppNavigation(
     
     val userPrefs = remember { UserPreferences.getInstance(context) }
     val currentUserId by userPrefs.userId.collectAsState()
+    
+    // Drawer state
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
     
     LaunchedEffect(currentUserId) {
         if (currentUserId.isNotEmpty() && currentUserId != "default-user") {
@@ -69,6 +77,27 @@ fun AppNavigation(
         factory = ProfitViewModelFactory(saleRepository, expenseRepository, transferRepository)
     )
     
+    // Handle drawer navigation
+    fun handleDrawerNavigation(destination: String) {
+        when (destination) {
+            "settings" -> {
+                navState.showSettings.value = true
+            }
+            "sync" -> {
+                application?.let {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            it.syncManager.syncAll()
+                        } catch (e: Exception) {
+                            // Handle error
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    // If showing settings
     if (navState.showSettings.value) {
         UserSettingsScreen(
             currentUserId = currentUserId,
@@ -91,39 +120,29 @@ fun AppNavigation(
     val isToBuyOrHistory = navState.showToBuyScreen.value || navState.showPurchaseHistory.value
     val isOrderScreen = navState.showOrderList.value || navState.showOrderHistory.value
     
-    // Constants for circular swipe
+    // Pager State
     val TOTAL_TABS = 5
-    val VIRTUAL_PAGES = 1000 // Large enough for infinite feel
-    val MID_PAGE = VIRTUAL_PAGES / 2 // Start in the middle
+    val VIRTUAL_PAGES = 1000
+    val MID_PAGE = VIRTUAL_PAGES / 2
     
-    // ⭐ Function to get actual page (0-4) from virtual page
-    fun getActualPage(virtualPage: Int): Int {
-        return virtualPage % TOTAL_TABS
-    }
+    fun getActualPage(virtualPage: Int): Int = virtualPage % TOTAL_TABS
     
-    // ⭐ Find the nearest virtual page that maps to the desired actual page
     fun findNearestVirtualPage(currentVirtual: Int, targetActual: Int): Int {
         val currentActual = getActualPage(currentVirtual)
         var diff = targetActual - currentActual
-        // Choose the shortest path
         if (diff > TOTAL_TABS / 2) diff -= TOTAL_TABS
         if (diff < -TOTAL_TABS / 2) diff += TOTAL_TABS
         return currentVirtual + diff
     }
     
-    // ⭐ Pager State with virtual pages
     val pagerState = rememberPagerState(
         initialPage = MID_PAGE,
         pageCount = { VIRTUAL_PAGES }
     )
     
-    // ⭐ Track if we're animating from a tab click
     var isAnimatingFromTabClick by remember { mutableStateOf(false) }
-    var pendingTab by remember { mutableStateOf<Int?>(null) }
     
-    // ⭐ When user swipes, update bottom bar
     LaunchedEffect(pagerState.currentPage) {
-        // Only update if not animating from tab click
         if (!isAnimatingFromTabClick) {
             val actualPage = getActualPage(pagerState.currentPage)
             if (navState.selectedTab.value != actualPage) {
@@ -132,31 +151,20 @@ fun AppNavigation(
         }
     }
     
-    // ⭐ When bottom bar tab is clicked, navigate to it
     LaunchedEffect(navState.selectedTab.value) {
         val targetActual = navState.selectedTab.value
         val currentVirtual = pagerState.currentPage
         val currentActual = getActualPage(currentVirtual)
         
-        // Only navigate if different
         if (targetActual != currentActual) {
             isAnimatingFromTabClick = true
-            pendingTab = targetActual
-            
-            // Find the nearest virtual page
             val targetVirtual = findNearestVirtualPage(currentVirtual, targetActual)
-            
-            // Animate to the target
             pagerState.animateScrollToPage(targetVirtual)
-            
-            // Wait for animation to complete then reset flag
             delay(300)
             isAnimatingFromTabClick = false
-            pendingTab = null
         }
     }
     
-    // ⭐ When pager settles, ensure bottom bar is correct
     LaunchedEffect(pagerState.isScrollInProgress) {
         if (!pagerState.isScrollInProgress && !isAnimatingFromTabClick) {
             val actualPage = getActualPage(pagerState.currentPage)
@@ -212,127 +220,146 @@ fun AppNavigation(
         navState.showTransferSuccess.value = true
     }
     
-    Scaffold(
-        topBar = {
-            AppTopBar(
-                title = screenTitle,
-                subtitle = screenSubtitle,
-                showBack = showBackButton,
-                onBack = {
-                    when {
-                        navState.showOrderHistory.value -> navState.showOrderHistory.value = false
-                        navState.showOrderList.value -> navState.showOrderList.value = false
-                        navState.showToBuyScreen.value -> {
-                            navState.showToBuyScreen.value = false
-                            navState.selectedToBuyItemIds.value = emptyList()
+    // Wrap everything with AppDrawer
+    AppDrawer(
+        drawerState = drawerState,
+        scope = scope,
+        currentUserId = currentUserId,
+        onNavigate = { destination ->
+            handleDrawerNavigation(destination)
+        }
+    ) {
+        Scaffold(
+            topBar = {
+                AppTopBar(
+                    title = screenTitle,
+                    subtitle = screenSubtitle,
+                    showBack = showBackButton,
+                    onBack = {
+                        when {
+                            navState.showOrderHistory.value -> navState.showOrderHistory.value = false
+                            navState.showOrderList.value -> navState.showOrderList.value = false
+                            navState.showToBuyScreen.value -> {
+                                navState.showToBuyScreen.value = false
+                                navState.selectedToBuyItemIds.value = emptyList()
+                            }
+                            navState.showPurchaseHistory.value -> navState.showPurchaseHistory.value = false
+                            navState.currentScreen.value == "person_detail" -> {
+                                navState.currentScreen.value = "main"
+                                navState.selectedPerson.value = null
+                                navState.selectedTab.value = 3
+                            }
+                            navState.currentScreen.value == "debt_list" -> {
+                                navState.currentScreen.value = "main"
+                                navState.selectedTab.value = 3
+                            }
+                            navState.currentScreen.value == "payment_history" -> {
+                                navState.currentScreen.value = "person_detail"
+                                navState.selectedDebtId.value = null
+                            }
                         }
-                        navState.showPurchaseHistory.value -> navState.showPurchaseHistory.value = false
-                        navState.currentScreen.value == "person_detail" -> {
-                            navState.currentScreen.value = "main"
-                            navState.selectedPerson.value = null
-                            navState.selectedTab.value = 3
-                        }
-                        navState.currentScreen.value == "debt_list" -> {
-                            navState.currentScreen.value = "main"
-                            navState.selectedTab.value = 3
-                        }
-                        navState.currentScreen.value == "payment_history" -> {
-                            navState.currentScreen.value = "person_detail"
-                            navState.selectedDebtId.value = null
-                        }
-                    }
-                },
-                showFilter = false,
-                onFilterClick = { },
-                filterExpanded = false,
-                onFilterSelected = { },
-                currentFilter = saleViewModel.selectedFilter.value,
-                showLanguage = (actualPage == 0 || actualPage == 3 || actualPage == 4) && 
-                    !isDetailScreen && !isToBuyOrHistory && !isOrderScreen,
-                onLanguageClick = { navState.showLanguageDialog.value = true },
-                showAddPerson = actualPage == 3 && !isDetailScreen,
-                onAddPersonClick = { navState.showAddPersonDialog.value = true },
-                showAddDebt = navState.currentScreen.value == "person_detail" && navState.selectedPerson.value != null,
-                onAddDebtClick = { navState.showAddDebtDialog.value = true },
-                showSettings = (actualPage == 3 || actualPage == 4) && 
-                    !isDetailScreen && !isToBuyOrHistory && !isOrderScreen,
-                onSettingsClick = { navState.showSettings.value = true }
-            )
-        },
-        bottomBar = {
-            if (!isDetailScreen && !isToBuyOrHistory && !isOrderScreen) {
-                AppBottomBar(
-                    selectedTab = actualPage,
-                    onTabSelected = { tab ->
-                        if (actualPage != tab) {
-                            navState.selectedTab.value = tab
+                    },
+                    showFilter = false,
+                    onFilterClick = { },
+                    filterExpanded = false,
+                    onFilterSelected = { },
+                    currentFilter = saleViewModel.selectedFilter.value,
+                    showLanguage = (actualPage == 0 || actualPage == 3 || actualPage == 4) && 
+                        !isDetailScreen && !isToBuyOrHistory && !isOrderScreen,
+                    onLanguageClick = { navState.showLanguageDialog.value = true },
+                    showAddPerson = actualPage == 3 && !isDetailScreen,
+                    onAddPersonClick = { navState.showAddPersonDialog.value = true },
+                    showAddDebt = navState.currentScreen.value == "person_detail" && navState.selectedPerson.value != null,
+                    onAddDebtClick = { navState.showAddDebtDialog.value = true },
+                    showSettings = (actualPage == 3 || actualPage == 4) && 
+                        !isDetailScreen && !isToBuyOrHistory && !isOrderScreen,
+                    onSettingsClick = { navState.showSettings.value = true },
+                    showMenu = !showBackButton && !isDetailScreen && !isToBuyOrHistory && !isOrderScreen,
+                    onMenuClick = {
+                        scope.launch {
+                            if (drawerState.isClosed) {
+                                drawerState.open()
+                            } else {
+                                drawerState.close()
+                            }
                         }
                     }
                 )
-            }
-        }
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            HorizontalPager(
-                state = pagerState,
-                modifier = Modifier.fillMaxSize(),
-                // ⭐ Key: Keep pages loaded for smooth circular swipe
-                beyondViewportPageCount = 1
-            ) { virtualPage ->
-                val page = virtualPage % 5
-                when (page) {
-                    0 -> SaleEntryScreen(onSaleAdded = onAddSaleSuccess)
-                    1 -> ExpenseEntryScreen(onExpenseAdded = onAddExpenseSuccess)
-                    2 -> TransferEntryScreen(onTransferAdded = onAddTransferSuccess)
-                    3 -> PersonListScreen(
-                        personViewModel = personViewModel,
-                        onPersonClick = { person ->
-                            navState.selectedPerson.value = person
-                            navState.currentScreen.value = "person_detail"
-                        },
-                        onAddClick = { navState.showAddPersonDialog.value = true }
-                    )
-                    4 -> ToBuyScreen(
-                        viewModel = toBuyViewModel,
-                        onAddItem = { navState.showAddToBuyItemDialog.value = true },
-                        onMarkBought = { itemIds ->
-                            navState.selectedToBuyItemIds.value = itemIds
-                            navState.showMarkAsBoughtDialog.value = true
-                        },
-                        onCreateOrder = { itemIds ->
-                            navState.showNewOrderDialog.value = true
-                            navState.selectedToBuyItemIds.value = itemIds
-                        },
-                        onHistoryClick = { navState.showPurchaseHistory.value = true }
+            },
+            bottomBar = {
+                if (!isDetailScreen && !isToBuyOrHistory && !isOrderScreen) {
+                    AppBottomBar(
+                        selectedTab = actualPage,
+                        onTabSelected = { tab ->
+                            if (actualPage != tab) {
+                                navState.selectedTab.value = tab
+                            }
+                        }
                     )
                 }
             }
-            
-            NavigationDestinationsOverlay(
-                navState = navState,
-                saleViewModel = saleViewModel,
-                expenseViewModel = expenseViewModel,
-                transferViewModel = transferViewModel,
-                personViewModel = personViewModel,
-                debtViewModel = debtViewModel,
-                productViewModel = productViewModel,
-                toBuyViewModel = toBuyViewModel,
-                orderViewModel = orderViewModel,
-                profitViewModel = profitViewModel,
-                currentUserId = currentUserId,
-                onSaveUserId = { userId ->
-                    userPrefs.saveUserId(userId)
-                },
-                onAddSaleSuccess = onAddSaleSuccess,
-                onAddExpenseSuccess = onAddExpenseSuccess,
-                onAddTransferSuccess = onAddTransferSuccess,
-                onShowAddPersonDialog = { navState.showAddPersonDialog.value = true },
-                onShowAddProductDialog = { navState.showAddProductDialog.value = true }
-            )
+        ) { paddingValues ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier.fillMaxSize(),
+                    beyondViewportPageCount = 1
+                ) { virtualPage ->
+                    val page = virtualPage % 5
+                    when (page) {
+                        0 -> SaleEntryScreen(onSaleAdded = onAddSaleSuccess)
+                        1 -> ExpenseEntryScreen(onExpenseAdded = onAddExpenseSuccess)
+                        2 -> TransferEntryScreen(onTransferAdded = onAddTransferSuccess)
+                        3 -> PersonListScreen(
+                            personViewModel = personViewModel,
+                            onPersonClick = { person ->
+                                navState.selectedPerson.value = person
+                                navState.currentScreen.value = "person_detail"
+                            },
+                            onAddClick = { navState.showAddPersonDialog.value = true }
+                        )
+                        4 -> ToBuyScreen(
+                            viewModel = toBuyViewModel,
+                            onAddItem = { navState.showAddToBuyItemDialog.value = true },
+                            onMarkBought = { itemIds ->
+                                navState.selectedToBuyItemIds.value = itemIds
+                                navState.showMarkAsBoughtDialog.value = true
+                            },
+                            onCreateOrder = { itemIds ->
+                                navState.showNewOrderDialog.value = true
+                                navState.selectedToBuyItemIds.value = itemIds
+                            },
+                            onHistoryClick = { navState.showPurchaseHistory.value = true }
+                        )
+                    }
+                }
+                
+                NavigationDestinationsOverlay(
+                    navState = navState,
+                    saleViewModel = saleViewModel,
+                    expenseViewModel = expenseViewModel,
+                    transferViewModel = transferViewModel,
+                    personViewModel = personViewModel,
+                    debtViewModel = debtViewModel,
+                    productViewModel = productViewModel,
+                    toBuyViewModel = toBuyViewModel,
+                    orderViewModel = orderViewModel,
+                    profitViewModel = profitViewModel,
+                    currentUserId = currentUserId,
+                    onSaveUserId = { userId ->
+                        userPrefs.saveUserId(userId)
+                    },
+                    onAddSaleSuccess = onAddSaleSuccess,
+                    onAddExpenseSuccess = onAddExpenseSuccess,
+                    onAddTransferSuccess = onAddTransferSuccess,
+                    onShowAddPersonDialog = { navState.showAddPersonDialog.value = true },
+                    onShowAddProductDialog = { navState.showAddProductDialog.value = true }
+                )
+            }
         }
     }
     
@@ -356,9 +383,4 @@ fun AppNavigation(
         onExpenseDismiss = { navState.showExpenseSuccess.value = false },
         onTransferDismiss = { navState.showTransferSuccess.value = false }
     )
-}
-
-// ⭐ Extension function for delay
-suspend fun delay(timeMillis: Long) {
-    kotlinx.coroutines.delay(timeMillis)
 }

@@ -1,14 +1,12 @@
 package com.hninakari.saletracker.ui.components
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.hninakari.saletracker.core.ui.theme.Primary
 import com.hninakari.saletracker.utils.DateUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,7 +28,9 @@ fun AppTopBar(
     showAddDebt: Boolean = false,
     onAddDebtClick: () -> Unit = {},
     showSettings: Boolean = false,
-    onSettingsClick: () -> Unit = {}
+    onSettingsClick: () -> Unit = {},
+    showMenu: Boolean = true,
+    onMenuClick: () -> Unit = {}
 ) {
     TopAppBar(
         title = {
@@ -38,104 +38,89 @@ fun AppTopBar(
                 Text(
                     text = title,
                     fontSize = 18.sp,
-                    fontWeight = androidx.compose.ui.text.font.FontWeight.Medium
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 if (subtitle.isNotEmpty()) {
                     Text(
                         text = subtitle,
                         fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f)
                     )
                 }
             }
         },
         navigationIcon = {
-            if (showBack) {
+            if (showMenu && !showBack) {
+                IconButton(onClick = onMenuClick) {
+                    Icon(
+                        imageVector = Icons.Default.Menu,
+                        contentDescription = "Menu",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            } else if (showBack) {
                 IconButton(onClick = onBack) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
         },
         actions = {
             if (showFilter) {
-                FilterDropdown(
-                    expanded = filterExpanded,
-                    onExpandChange = onFilterClick,
-                    onFilterSelected = onFilterSelected,
-                    currentFilter = currentFilter
-                )
+                IconButton(onClick = onFilterClick) {
+                    Icon(
+                        Icons.Default.FilterList,
+                        contentDescription = "Filter",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
-            
             if (showLanguage) {
                 IconButton(onClick = onLanguageClick) {
-                    Text("🌐", fontSize = 20.sp)
+                    Icon(
+                        Icons.Default.Language,
+                        contentDescription = "Language",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
-            
             if (showAddPerson) {
                 IconButton(onClick = onAddPersonClick) {
-                    Icon(Icons.Default.Add, contentDescription = "Add Person")
+                    Icon(
+                        Icons.Default.PersonAdd,
+                        contentDescription = "Add Person",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
-            
             if (showAddDebt) {
                 IconButton(onClick = onAddDebtClick) {
-                    Icon(Icons.Default.Add, contentDescription = "Add Debt")
+                    Icon(
+                        Icons.Default.Add,
+                        contentDescription = "Add Debt",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
-            
             if (showSettings) {
                 IconButton(onClick = onSettingsClick) {
-                    Icon(Icons.Default.Settings, contentDescription = "Settings")
+                    Icon(
+                        Icons.Default.Settings,
+                        contentDescription = "Settings",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Primary,
-            titleContentColor = MaterialTheme.colorScheme.onPrimary,
-            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
-            actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+            titleContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            navigationIconContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            actionIconContentColor = MaterialTheme.colorScheme.onSurfaceVariant
         )
     )
-}
-
-@Composable
-fun FilterDropdown(
-    expanded: Boolean,
-    onExpandChange: () -> Unit,
-    onFilterSelected: (DateUtils.DateFilter) -> Unit,
-    currentFilter: DateUtils.DateFilter
-) {
-    Box {
-        IconButton(onClick = onExpandChange) {
-            Icon(Icons.Default.FilterList, contentDescription = "Filter")
-        }
-        
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = onExpandChange,
-            modifier = Modifier.width(160.dp)
-        ) {
-            DateUtils.DateFilter.values().forEach { filter ->
-                val label = when (filter) {
-                    DateUtils.DateFilter.TODAY -> "ယနေ့"
-                    DateUtils.DateFilter.THIS_WEEK -> "ဤတစ်ပတ်"
-                    DateUtils.DateFilter.THIS_MONTH -> "ဤလ"
-                    DateUtils.DateFilter.THIS_YEAR -> "ဤနှစ်"
-                    DateUtils.DateFilter.ALL_TIME -> "အားလုံး"
-                }
-                DropdownMenuItem(
-                    text = { Text(label) },
-                    onClick = {
-                        onFilterSelected(filter)
-                    },
-                    trailingIcon = {
-                        if (currentFilter == filter) {
-                            Icon(Icons.Default.Check, contentDescription = null)
-                        }
-                    }
-                )
-            }
-        }
-    }
 }
