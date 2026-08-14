@@ -91,35 +91,78 @@ fun AppNavigation(
     val isToBuyOrHistory = navState.showToBuyScreen.value || navState.showPurchaseHistory.value
     val isOrderScreen = navState.showOrderList.value || navState.showOrderHistory.value
     
-    // ⭐ Pager State for Circular Swipe
-    // Using a large virtual count to simulate infinite scrolling
-    val virtualPageCount = 1000 // Large enough to feel infinite
-    val pagerState = rememberPagerState(
-        initialPage = virtualPageCount / 2, // Start in the middle
-        pageCount = { virtualPageCount }
-    )
+    // Constants for circular swipe
+    val TOTAL_TABS = 5
+    val VIRTUAL_PAGES = 1000 // Large enough for infinite feel
+    val MID_PAGE = VIRTUAL_PAGES / 2 // Start in the middle
     
-    // ⭐ Map virtual page to actual tab (0-4)
+    // ⭐ Function to get actual page (0-4) from virtual page
     fun getActualPage(virtualPage: Int): Int {
-        return virtualPage % 5
+        return virtualPage % TOTAL_TABS
     }
     
-    // ⭐ Sync bottom bar with pager (using actual page)
+    // ⭐ Find the nearest virtual page that maps to the desired actual page
+    fun findNearestVirtualPage(currentVirtual: Int, targetActual: Int): Int {
+        val currentActual = getActualPage(currentVirtual)
+        var diff = targetActual - currentActual
+        // Choose the shortest path
+        if (diff > TOTAL_TABS / 2) diff -= TOTAL_TABS
+        if (diff < -TOTAL_TABS / 2) diff += TOTAL_TABS
+        return currentVirtual + diff
+    }
+    
+    // ⭐ Pager State with virtual pages
+    val pagerState = rememberPagerState(
+        initialPage = MID_PAGE,
+        pageCount = { VIRTUAL_PAGES }
+    )
+    
+    // ⭐ Track if we're animating from a tab click
+    var isAnimatingFromTabClick by remember { mutableStateOf(false) }
+    var pendingTab by remember { mutableStateOf<Int?>(null) }
+    
+    // ⭐ When user swipes, update bottom bar
     LaunchedEffect(pagerState.currentPage) {
-        val actualPage = getActualPage(pagerState.currentPage)
-        if (navState.selectedTab.value != actualPage) {
-            navState.selectedTab.value = actualPage
+        // Only update if not animating from tab click
+        if (!isAnimatingFromTabClick) {
+            val actualPage = getActualPage(pagerState.currentPage)
+            if (navState.selectedTab.value != actualPage) {
+                navState.selectedTab.value = actualPage
+            }
         }
     }
     
-    // ⭐ Sync pager with bottom bar selection
+    // ⭐ When bottom bar tab is clicked, navigate to it
     LaunchedEffect(navState.selectedTab.value) {
-        val currentActual = getActualPage(pagerState.currentPage)
-        if (currentActual != navState.selectedTab.value) {
-            // Calculate target page that matches the desired actual page
-            val currentVirtual = pagerState.currentPage
-            val targetVirtual = currentVirtual + (navState.selectedTab.value - currentActual)
+        val targetActual = navState.selectedTab.value
+        val currentVirtual = pagerState.currentPage
+        val currentActual = getActualPage(currentVirtual)
+        
+        // Only navigate if different
+        if (targetActual != currentActual) {
+            isAnimatingFromTabClick = true
+            pendingTab = targetActual
+            
+            // Find the nearest virtual page
+            val targetVirtual = findNearestVirtualPage(currentVirtual, targetActual)
+            
+            // Animate to the target
             pagerState.animateScrollToPage(targetVirtual)
+            
+            // Wait for animation to complete then reset flag
+            delay(300)
+            isAnimatingFromTabClick = false
+            pendingTab = null
+        }
+    }
+    
+    // ⭐ When pager settles, ensure bottom bar is correct
+    LaunchedEffect(pagerState.isScrollInProgress) {
+        if (!pagerState.isScrollInProgress && !isAnimatingFromTabClick) {
+            val actualPage = getActualPage(pagerState.currentPage)
+            if (navState.selectedTab.value != actualPage) {
+                navState.selectedTab.value = actualPage
+            }
         }
     }
     
@@ -234,10 +277,11 @@ fun AppNavigation(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            // ⭐ Circular Swipe Pager
             HorizontalPager(
                 state = pagerState,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                // ⭐ Key: Keep pages loaded for smooth circular swipe
+                beyondViewportPageCount = 1
             ) { virtualPage ->
                 val page = virtualPage % 5
                 when (page) {
@@ -312,4 +356,9 @@ fun AppNavigation(
         onExpenseDismiss = { navState.showExpenseSuccess.value = false },
         onTransferDismiss = { navState.showTransferSuccess.value = false }
     )
+}
+
+// ⭐ Extension function for delay
+suspend fun delay(timeMillis: Long) {
+    kotlinx.coroutines.delay(timeMillis)
 }
