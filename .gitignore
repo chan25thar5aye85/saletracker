@@ -1,17 +1,95 @@
-# Gradle
-.gradle/
-**/build/
-
-# Local configuration
-local.properties
-
-# Android Studio
-.idea/
+# Android
 *.iml
-
-# Build outputs
+*.class
 *.apk
-*.aab
-
-# OS files
+*.ap_
+*.dex
+*.jar
+*.aar
+*.war
+*.ear
+*.log
+*.properties
+*.lock
+*.tmp
+*.swp
+*.swo
 .DS_Store
+.idea/
+.caches/
+.gradle/
+.gradle/
+build/
+captures/
+.externalNativeBuild/
+.idea/libraries/
+.idea/modules.xml
+.idea/workspace.xml
+.idea/caches/
+.idea/compiler.xml
+.idea/gradle.xml
+.idea/misc.xml
+.idea/runConfigurations/
+.idea/vcs.xml
+.idea/libraries/
+local.properties
+proguard/
+*.keystore
+*.jks
+google-services.json
+app/google-services.json
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Backup files
+*~
+*.bak
+*.backup
+
+# Gradle
+gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.jar
+
+# Compiled output
+bin/
+gen/
+out/
+target/
+
+# Log files
+log/
+logs/
+
+# Testing
+test-output/
+
+# Lint
+lint/
+lint.xml
+
+# Generated files
+app/build/
+build/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+device2.db
+A
+Compilation
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

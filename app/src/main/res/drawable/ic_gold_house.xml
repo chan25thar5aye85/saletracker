@@ -1,0 +1,232 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="512dp"
+    android:height="512dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+    
+    <!-- Background circle -->
+    <path
+        android:fillColor="#FF6B9D"
+        android:pathData="M256,256 m-220,0 a220,220 0 1,1 440,0 a220,220 0 1,1 -440,0"/>
+    
+    <!-- Hair - back -->
+    <path
+        android:fillColor="#4A2810"
+        android:pathData="M196,180 L196,160 L316,160 L316,180 L336,180 L336,200 L356,200 L356,240 L376,240 L376,280 L356,280 L356,260 L336,260 L336,240 L316,240 L316,280 L296,280 L296,300 L276,300 L276,320 L236,320 L236,300 L216,300 L216,280 L196,280 L196,240 L176,240 L176,260 L156,260 L156,280 L136,280 L136,240 L156,240 L156,200 L176,200 L176,180 Z"/>
+    
+    <!-- Face skin -->
+    <path
+        android:fillColor="#FFD5C2"
+        android:pathData="M196,180 L196,200 L176,200 L176,240 L196,240 L196,280 L216,280 L216,300 L236,300 L236,320 L276,320 L276,300 L296,300 L296,280 L316,280 L316,240 L336,240 L336,200 L316,200 L316,180 Z"/>
+    
+    <!-- Hair - front -->
+    <path
+        android:fillColor="#4A2810"
+        android:pathData="M196,180 L216,180 L216,160 L236,160 L236,180 L276,180 L276,160 L296,160 L296,180 L316,180 L316,200 L336,200 L336,180 L316,160 L316,140 L296,140 L296,120 L276,120 L276,100 L236,100 L236,120 L216,120 L216,140 L196,140 L196,160 L176,160 L176,180 L196,180 Z"/>
+    
+    <!-- Bangs -->
+    <path
+        android:fillColor="#4A2810"
+        android:pathData="M196,180 L216,180 L216,200 L196,200 L176,200 L176,180 L196,180 Z"/>
+    <path
+        android:fillColor="#4A2810"
+        android:pathData="M216,180 L236,180 L236,200 L216,200 L216,180 Z"/>
+    <path
+        android:fillColor="#4A2810"
+        android:pathData="M236,180 L276,180 L276,200 L236,200 L236,180 Z"/>
+    <path
+        android:fillColor="#4A2810"
+        android:pathData="M276,180 L296,180 L296,200 L276,200 L276,180 Z"/>
+    <path
+        android:fillColor="#4A2810"
+        android:pathData="M296,180 L316,180 L316,200 L296,200 L296,180 Z"/>
+    <path
+        android:fillColor="#4A2810"
+        android:pathData="M316,180 L336,180 L336,200 L316,200 L316,180 Z"/>
+    
+    <!-- Eyes - white -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M216,220 L216,240 L196,240 L196,220 Z"/>
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M316,220 L316,240 L296,240 L296,220 Z"/>
+    
+    <!-- Eyes - iris -->
+    <path
+        android:fillColor="#4A2810"
+        android:pathData="M216,220 L216,240 L206,240 L206,220 Z"/>
+    <path
+        android:fillColor="#4A2810"
+        android:pathData="M306,220 L306,240 L296,240 L296,220 Z"/>
+    
+    <!-- Eyes - pupils -->
+    <path
+        android:fillColor="#1A1A1A"
+        android:pathData="M216,220 L216,230 L206,230 L206,220 Z"/>
+    <path
+        android:fillColor="#1A1A1A"
+        android:pathData="M306,220 L306,230 L296,230 L296,220 Z"/>
+    
+    <!-- Eye shine -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M210,222 L210,226 L206,226 L206,222 Z"/>
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M300,222 L300,226 L296,226 L296,222 Z"/>
+    
+    <!-- Blush -->
+    <path
+        android:fillColor="#FF8A9B"
+        android:alpha="0.5"
+        android:pathData="M176,260 L176,280 L196,280 L196,260 Z"/>
+    <path
+        android:fillColor="#FF8A9B"
+        android:alpha="0.5"
+        android:pathData="M316,260 L316,280 L336,280 L336,260 Z"/>
+    
+    <!-- Mouth -->
+    <path
+        android:fillColor="#E8737A"
+        android:pathData="M236,280 L236,290 L276,290 L276,280 Z"/>
+    <path
+        android:fillColor="#C45A6D"
+        android:pathData="M236,290 L236,295 L276,295 L276,290 Z"/>
+    
+    <!-- Dress - top -->
+    <path
+        android:fillColor="#FF4081"
+        android:pathData="M196,300 L196,280 L216,280 L216,300 L236,300 L236,280 L276,280 L276,300 L296,300 L296,280 L316,280 L316,300 L336,300 L336,320 L316,320 L316,340 L296,340 L296,360 L276,360 L276,380 L236,380 L236,360 L216,360 L216,340 L196,340 L196,320 L176,320 L176,300 Z"/>
+    
+    <!-- Dress - bottom/skirt -->
+    <path
+        android:fillColor="#F50057"
+        android:pathData="M176,320 L176,340 L156,340 L156,360 L176,360 L176,380 L196,380 L196,400 L216,400 L216,420 L296,420 L296,400 L316,400 L316,380 L336,380 L336,360 L356,360 L356,340 L336,340 L336,320 L316,320 L316,340 L296,340 L296,360 L276,360 L276,380 L236,380 L236,360 L216,360 L216,340 L196,340 L196,320 Z"/>
+    
+    <!-- Dress straps -->
+    <path
+        android:fillColor="#FF4081"
+        android:pathData="M196,300 L196,320 L176,320 L176,300 Z"/>
+    <path
+        android:fillColor="#FF4081"
+        android:pathData="M316,300 L316,320 L336,320 L336,300 Z"/>
+    
+    <!-- Left arm - bent, holding bag -->
+    <path
+        android:fillColor="#FFD5C2"
+        android:pathData="M176,280 L176,310 L140,310 L140,290 L156,290 L156,310 L176,310 L176,320 L196,320 L196,300 Z"/>
+    
+    <!-- Right arm - free, slightly raised -->
+    <path
+        android:fillColor="#FFD5C2"
+        android:pathData="M336,280 L336,300 L356,300 L356,340 L336,340 L336,320 L316,320 L316,300 Z"/>
+    
+    <!-- Shopping Bag - Main body -->
+    <path
+        android:fillColor="#8D6E63"
+        android:pathData="M120,320 L120,430 L200,430 L200,320 Z"/>
+    
+    <!-- Shopping Bag - Front highlight -->
+    <path
+        android:fillColor="#A1887F"
+        android:pathData="M125,325 L125,425 L195,425 L195,325 Z"/>
+    
+    <!-- Shopping Bag - Handles -->
+    <path
+        android:fillColor="#6D4C41"
+        android:strokeColor="#6D4C41"
+        android:strokeWidth="5"
+        android:pathData="M140,320 L140,290 L160,290 L160,320"/>
+    <path
+        android:fillColor="#6D4C41"
+        android:strokeColor="#6D4C41"
+        android:strokeWidth="5"
+        android:pathData="M165,320 L165,290 L185,290 L185,320"/>
+    
+    <!-- Shopping Bag - Handle highlights -->
+    <path
+        android:fillColor="#8D6E63"
+        android:strokeColor="#8D6E63"
+        android:strokeWidth="2"
+        android:pathData="M143,320 L143,293 L157,293 L157,320"/>
+    <path
+        android:fillColor="#8D6E63"
+        android:strokeColor="#8D6E63"
+        android:strokeWidth="2"
+        android:pathData="M168,320 L168,293 L182,293 L182,320"/>
+    
+    <!-- Left hand (holding bag handles) -->
+    <path
+        android:fillColor="#FFD5C2"
+        android:pathData="M140,310 L140,295 L150,295 L150,310 Z"/>
+    
+    <!-- Shopping Bag - Gold star decoration -->
+    <path
+        android:fillColor="#FFD700"
+        android:pathData="M155,370 L161,370 L161,364 L167,364 L167,370 L173,370 L173,376 L167,376 L167,382 L161,382 L161,376 L155,376 Z"/>
+    
+    <!-- Shopping Bag - Bottom line -->
+    <path
+        android:strokeColor="#5D4037"
+        android:strokeWidth="2"
+        android:pathData="M120,425 L200,425"/>
+    
+    <!-- Shopping Bag - Side lines -->
+    <path
+        android:strokeColor="#5D4037"
+        android:strokeWidth="2"
+        android:pathData="M120,320 L120,425 M200,320 L200,425"/>
+    
+    <!-- Shopping Bag - Fold lines -->
+    <path
+        android:strokeColor="#6D4C41"
+        android:strokeWidth="1"
+        android:pathData="M145,325 L145,425 M175,325 L175,425"/>
+    
+    <!-- Legs -->
+    <path
+        android:fillColor="#FFD5C2"
+        android:pathData="M216,420 L216,440 L196,440 L196,460 L216,460 L216,480 L236,480 L236,460 L236,440 L236,420 Z"/>
+    <path
+        android:fillColor="#FFD5C2"
+        android:pathData="M276,420 L276,440 L296,440 L296,460 L276,460 L276,480 L256,480 L256,460 L256,440 L276,420 Z"/>
+    
+    <!-- Shoes -->
+    <path
+        android:fillColor="#1A1A1A"
+        android:pathData="M196,460 L196,480 L236,480 L236,460 Z"/>
+    <path
+        android:fillColor="#1A1A1A"
+        android:pathData="M256,460 L256,480 L296,480 L296,460 Z"/>
+    
+    <!-- Hair ribbons -->
+    <path
+        android:fillColor="#FF4081"
+        android:pathData="M176,160 L176,180 L156,180 L156,160 Z"/>
+    <path
+        android:fillColor="#FF4081"
+        android:pathData="M336,160 L336,180 L356,180 L356,160 Z"/>
+    
+    <!-- Decorative stars -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:alpha="0.6"
+        android:pathData="M390,120 L398,120 L398,112 L402,112 L402,120 L410,120 L410,128 L402,128 L402,136 L398,136 L398,128 L390,128 Z"/>
+    
+    <path
+        android:fillColor="#FFFFFF"
+        android:alpha="0.4"
+        android:pathData="M370,100 L376,100 L376,94 L380,94 L380,100 L386,100 L386,106 L380,106 L380,112 L376,112 L376,106 L370,106 Z"/>
+    
+    <path
+        android:fillColor="#FFFFFF"
+        android:alpha="0.5"
+        android:pathData="M400,160 L406,160 L406,154 L410,154 L410,160 L416,160 L416,166 L410,166 L410,172 L406,172 L406,166 L400,166 Z"/>
+    
+    <path
+        android:fillColor="#FFFFFF"
+        android:alpha="0.5"
+        android:pathData="M80,200 L86,200 L86,194 L90,194 L90,200 L96,200 L96,206 L90,206 L90,212 L86,212 L86,206 L80,206 Z"/>
+    
+</vector>

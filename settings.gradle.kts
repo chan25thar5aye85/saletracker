@@ -11,11 +11,9 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { url = uri("https://jitpack.io") }
     }
 }
 
-rootProject.name = "SaleMaster"
-
+rootProject.name = "Saletracker"
 include(":app")
-include(":core")
-include(":feature:inventory")

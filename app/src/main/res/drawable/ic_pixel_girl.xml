@@ -1,0 +1,201 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="512dp"
+    android:height="512dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+    
+    <!-- Background Circle - Purple -->
+    <path
+        android:fillColor="#9C27B0"
+        android:pathData="M256,256 m-220,0 a220,220 0 1,1 440,0 a220,220 0 1,1 -440,0"/>
+    
+    <!-- Inner glow -->
+    <path
+        android:fillColor="#CE93D8"
+        android:alpha="0.4"
+        android:pathData="M256,256 m-180,0 a180,180 0 1,1 360,0 a180,180 0 1,1 -360,0"/>
+    
+    <!-- ===== HAIR - BACK LAYER (Dark Purple) ===== -->
+    <path
+        android:fillColor="#4A148C"
+        android:pathData="M196,180 L196,160 L316,160 L316,180 L336,180 L336,200 L356,200 L356,240 L376,240 L376,280 L356,280 L356,260 L336,260 L336,240 L316,240 L316,280 L296,280 L296,300 L276,300 L276,320 L236,320 L236,300 L216,300 L216,280 L196,280 L196,240 L176,240 L176,260 L156,260 L156,280 L136,280 L136,240 L156,240 L156,200 L176,200 L176,180 Z"/>
+    
+    <!-- ===== FACE ===== -->
+    <path
+        android:fillColor="#F3E5F5"
+        android:pathData="M196,180 L196,200 L176,200 L176,240 L196,240 L196,280 L216,280 L216,300 L236,300 L236,320 L276,320 L276,300 L296,300 L296,280 L316,280 L316,240 L336,240 L336,200 L316,200 L316,180 Z"/>
+    
+    <!-- ===== HAIR - FRONT (Purple) ===== -->
+    <path
+        android:fillColor="#6A1B9A"
+        android:pathData="M196,180 L216,180 L216,160 L236,160 L236,180 L276,180 L276,160 L296,160 L296,180 L316,180 L316,200 L336,200 L336,180 L316,160 L316,140 L296,140 L296,120 L276,120 L276,100 L236,100 L236,120 L216,120 L216,140 L196,140 L196,160 L176,160 L176,180 L196,180 Z"/>
+    
+    <!-- Hair shine -->
+    <path
+        android:fillColor="#AB47BC"
+        android:alpha="0.3"
+        android:pathData="M216,140 L236,140 L236,160 L216,160 Z
+                          M276,120 L296,120 L296,140 L276,140 Z
+                          M256,100 L276,100 L276,120 L256,120 Z"/>
+    
+    <!-- Bangs -->
+    <path
+        android:fillColor="#6A1B9A"
+        android:pathData="M196,180 L216,180 L216,200 L196,200 L176,200 L176,180 L196,180 Z
+                          M216,180 L236,180 L236,200 L216,200 L216,180 Z
+                          M236,180 L276,180 L276,200 L236,200 L236,180 Z
+                          M276,180 L296,180 L296,200 L276,200 L276,180 Z
+                          M296,180 L316,180 L316,200 L296,200 L296,180 Z
+                          M316,180 L336,180 L336,200 L316,200 L316,180 Z"/>
+    
+    <!-- ===== EYES (Purple) ===== -->
+    <!-- Eye whites -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M216,220 L216,240 L196,240 L196,220 Z
+                          M316,220 L316,240 L296,240 L296,220 Z"/>
+    
+    <!-- Iris - Purple -->
+    <path
+        android:fillColor="#AB47BC"
+        android:pathData="M216,220 L216,240 L206,240 L206,220 Z
+                          M306,220 L306,240 L296,240 L296,220 Z"/>
+    
+    <!-- Pupils -->
+    <path
+        android:fillColor="#4A148C"
+        android:pathData="M216,220 L216,230 L206,230 L206,220 Z
+                          M306,220 L306,230 L296,230 L296,220 Z"/>
+    
+    <!-- Eye shine -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M210,222 L210,226 L206,226 L206,222 Z
+                          M300,222 L300,226 L296,226 L296,222 Z"/>
+    
+    <!-- ===== BLUSH (Light Purple Pink) ===== -->
+    <path
+        android:fillColor="#E1BEE7"
+        android:alpha="0.5"
+        android:pathData="M176,260 L176,280 L196,280 L196,260 Z
+                          M316,260 L316,280 L336,280 L336,260 Z"/>
+    
+    <!-- ===== MOUTH ===== -->
+    <path
+        android:fillColor="#CE93D8"
+        android:pathData="M236,280 L236,290 L276,290 L276,280 Z"/>
+    <path
+        android:fillColor="#8E24AA"
+        android:alpha="0.3"
+        android:pathData="M236,290 L236,295 L276,295 L276,290 Z"/>
+    
+    <!-- ===== DRESS (Purple) ===== -->
+    <!-- Dress top -->
+    <path
+        android:fillColor="#AB47BC"
+        android:pathData="M196,300 L196,280 L216,280 L216,300 L236,300 L236,280 L276,280 L276,300 L296,300 L296,280 L316,280 L316,300 L336,300 L336,320 L316,320 L316,340 L296,340 L296,360 L276,360 L276,380 L236,380 L236,360 L216,360 L216,340 L196,340 L196,320 L176,320 L176,300 Z"/>
+    
+    <!-- Dress top highlight -->
+    <path
+        android:fillColor="#CE93D8"
+        android:alpha="0.3"
+        android:pathData="M206,280 L206,300 L226,300 L226,280 Z
+                          M286,280 L286,300 L306,300 L306,280 Z"/>
+    
+    <!-- Dress straps -->
+    <path
+        android:fillColor="#AB47BC"
+        android:pathData="M196,300 L196,320 L176,320 L176,300 Z
+                          M316,300 L316,320 L336,320 L336,300 Z"/>
+    
+    <!-- Skirt - darker purple -->
+    <path
+        android:fillColor="#7B1FA2"
+        android:pathData="M176,320 L176,340 L156,340 L156,360 L176,360 L176,380 L196,380 L196,400 L216,400 L216,420 L296,420 L296,400 L316,400 L316,380 L336,380 L336,360 L356,360 L356,340 L336,340 L336,320 L316,320 L316,340 L296,340 L296,360 L276,360 L276,380 L236,380 L236,360 L216,360 L216,340 L196,340 L196,320 Z"/>
+    
+    <!-- Skirt shimmer -->
+    <path
+        android:fillColor="#AB47BC"
+        android:alpha="0.2"
+        android:pathData="M176,340 L196,340 L196,360 L176,360 Z
+                          M316,340 L336,340 L336,360 L316,360 Z
+                          M216,380 L236,380 L236,400 L216,400 Z"/>
+    
+    <!-- ===== ARMS ===== -->
+    <!-- Left arm -->
+    <path
+        android:fillColor="#F3E5F5"
+        android:pathData="M176,300 L176,340 L156,340 L156,360 L176,360 L176,380 L196,380 L196,340 L196,320 L176,320 L176,300 Z"/>
+    
+    <!-- Right arm -->
+    <path
+        android:fillColor="#F3E5F5"
+        android:pathData="M336,300 L336,340 L356,340 L356,360 L336,360 L336,380 L316,380 L316,340 L316,320 L336,320 L336,300 Z"/>
+    
+    <!-- ===== LEGS ===== -->
+    <path
+        android:fillColor="#F3E5F5"
+        android:pathData="M216,420 L216,440 L196,440 L196,460 L216,460 L216,480 L236,480 L236,460 L236,440 L236,420 Z"/>
+    <path
+        android:fillColor="#F3E5F5"
+        android:pathData="M276,420 L276,440 L296,440 L296,460 L276,460 L276,480 L256,480 L256,460 L256,440 L276,420 Z"/>
+    
+    <!-- ===== SHOES (Dark Purple) ===== -->
+    <path
+        android:fillColor="#4A148C"
+        android:pathData="M196,460 L196,480 L236,480 L236,460 Z
+                          M256,460 L256,480 L296,480 L296,460 Z"/>
+    
+    <!-- ===== HAIR RIBBONS (Light Purple) ===== -->
+    <path
+        android:fillColor="#CE93D8"
+        android:pathData="M176,160 L176,180 L156,180 L156,160 Z
+                          M336,160 L336,180 L356,180 L356,160 Z"/>
+    
+    <!-- ===== MAGICAL STAR DECORATIONS ===== -->
+    <!-- Star 1 -->
+    <path
+        android:fillColor="#E1BEE7"
+        android:alpha="0.8"
+        android:pathData="M390,120 L394,112 L398,120 L394,128 Z"/>
+    
+    <!-- Star 2 -->
+    <path
+        android:fillColor="#E1BEE7"
+        android:alpha="0.5"
+        android:pathData="M370,100 L373,92 L376,100 L373,108 Z"/>
+    
+    <!-- Star 3 -->
+    <path
+        android:fillColor="#E1BEE7"
+        android:alpha="0.6"
+        android:pathData="M400,160 L403,152 L406,160 L403,168 Z"/>
+    
+    <!-- Star 4 -->
+    <path
+        android:fillColor="#E1BEE7"
+        android:alpha="0.5"
+        android:pathData="M80,200 L83,192 L86,200 L83,208 Z"/>
+    
+    <!-- Star 5 -->
+    <path
+        android:fillColor="#E1BEE7"
+        android:alpha="0.4"
+        android:pathData="M420,180 L422,174 L424,180 L422,186 Z"/>
+    
+    <!-- Star 6 -->
+    <path
+        android:fillColor="#E1BEE7"
+        android:alpha="0.3"
+        android:pathData="M90,150 L92,144 L94,150 L92,156 Z"/>
+    
+    <!-- ===== SPARKLE DOTS ===== -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:alpha="0.6"
+        android:pathData="M380,130 A3,3 0 1,1 380,136 A3,3 0 1,1 380,130 Z
+                          M410,110 A2,2 0 1,1 410,114 A2,2 0 1,1 410,110 Z
+                          M100,170 A2,2 0 1,1 100,174 A2,2 0 1,1 100,170 Z
+                          M430,140 A2,2 0 1,1 430,144 A2,2 0 1,1 430,140 Z"/>
+    
+</vector>

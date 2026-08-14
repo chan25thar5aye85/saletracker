@@ -1,17 +1,27 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Required for Supabase network communication -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
+        android:name=".SaleTrackerApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_pixel_girl"
+        android:label="နှင်းဧကရီ"
+        android:roundIcon="@drawable/ic_pixel_girl"
+        android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:label="Hnin Akari">
+        android:usesCleartextTraffic="true">
 
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
-
             </intent-filter>
 
         </activity>
