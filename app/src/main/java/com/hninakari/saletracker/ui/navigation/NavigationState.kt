@@ -37,6 +37,12 @@ class NavigationState {
     // Sales History
     val showSalesHistory = mutableStateOf(false)
     
+    // Expense History
+    val showExpenseHistory = mutableStateOf(false)
+    
+    // Transfer History
+    val showTransferHistory = mutableStateOf(false)
+    
     // Dialogs
     val showAddPersonDialog = mutableStateOf(false)
     val showAddProductDialog = mutableStateOf(false)

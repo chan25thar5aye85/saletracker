@@ -125,6 +125,8 @@ fun AppNavigation(
     val isToBuyOrHistory = navState.showToBuyScreen.value || navState.showPurchaseHistory.value
     val isOrderScreen = navState.showOrderList.value || navState.showOrderHistory.value
     val isSalesHistory = navState.showSalesHistory.value
+    val isExpenseHistory = navState.showExpenseHistory.value
+    val isTransferHistory = navState.showTransferHistory.value
 
     // Pager
     val TOTAL_TABS = 5
@@ -202,6 +204,8 @@ fun AppNavigation(
         navState.showOrderList.value -> "အမှာစာများ"
         navState.showOrderHistory.value -> "အမှာစာမှတ်တမ်း"
         navState.showSalesHistory.value -> "Sales History"
+        navState.showExpenseHistory.value -> "Expense History"
+        navState.showTransferHistory.value -> "Transfer History"
         actualPage == 0 -> stringResource(R.string.add_sale)
         actualPage == 1 -> stringResource(R.string.add_expense)
         actualPage == 2 -> stringResource(R.string.add_transfer)
@@ -217,7 +221,7 @@ fun AppNavigation(
         else -> ""
     }
 
-    val showBackButton = isDetailScreen || isToBuyOrHistory || isOrderScreen || isSalesHistory
+    val showBackButton = isDetailScreen || isToBuyOrHistory || isOrderScreen || isSalesHistory || isExpenseHistory || isTransferHistory
 
     // Sale Success
     val onAddSaleSuccess: (Sale) -> Unit = { sale ->
@@ -252,6 +256,12 @@ fun AppNavigation(
                     showBack = showBackButton,
                     onBack = {
                         when {
+                            navState.showTransferHistory.value -> {
+                                navState.showTransferHistory.value = false
+                            }
+                            navState.showExpenseHistory.value -> {
+                                navState.showExpenseHistory.value = false
+                            }
                             navState.showSalesHistory.value -> {
                                 navState.showSalesHistory.value = false
                             }
@@ -297,7 +307,7 @@ fun AppNavigation(
                     onAddDebtClick = {
                         navState.showAddDebtDialog.value = true
                     },
-                    showMenu = !showBackButton && !isDetailScreen && !isToBuyOrHistory && !isOrderScreen && !isSalesHistory,
+                    showMenu = !showBackButton && !isDetailScreen && !isToBuyOrHistory && !isOrderScreen && !isSalesHistory && !isExpenseHistory && !isTransferHistory,
                     onMenuClick = {
                         scope.launch {
                             if (drawerState.isClosed) {
@@ -310,7 +320,7 @@ fun AppNavigation(
                 )
             },
             bottomBar = {
-                if (!isDetailScreen && !isToBuyOrHistory && !isOrderScreen && !isSalesHistory) {
+                if (!isDetailScreen && !isToBuyOrHistory && !isOrderScreen && !isSalesHistory && !isExpenseHistory && !isTransferHistory) {
                     AppBottomBar(
                         selectedTab = actualPage,
                         onTabSelected = { tab ->
@@ -334,6 +344,18 @@ fun AppNavigation(
                             saleViewModel = saleViewModel
                         )
                     }
+                    // Show Expense History Screen
+                    navState.showExpenseHistory.value -> {
+                        ExpenseListScreen(
+                            expenseViewModel = expenseViewModel
+                        )
+                    }
+                    // Show Transfer History Screen
+                    navState.showTransferHistory.value -> {
+                        TransferListScreen(
+                            transferViewModel = transferViewModel
+                        )
+                    }
                     // Show other screens
                     else -> {
                         HorizontalPager(
@@ -354,12 +376,20 @@ fun AppNavigation(
                                 }
                                 1 -> {
                                     ExpenseEntryScreen(
-                                        onExpenseAdded = onAddExpenseSuccess
+                                        expenseViewModel = expenseViewModel,
+                                        onExpenseAdded = onAddExpenseSuccess,
+                                        onHistoryClick = {
+                                            navState.showExpenseHistory.value = true
+                                        }
                                     )
                                 }
                                 2 -> {
                                     TransferEntryScreen(
-                                        onTransferAdded = onAddTransferSuccess
+                                        transferViewModel = transferViewModel,
+                                        onTransferAdded = onAddTransferSuccess,
+                                        onHistoryClick = {
+                                            navState.showTransferHistory.value = true
+                                        }
                                     )
                                 }
                                 3 -> {
