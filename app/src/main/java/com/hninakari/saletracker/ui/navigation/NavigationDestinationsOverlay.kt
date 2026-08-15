@@ -1,9 +1,8 @@
 package com.hninakari.saletracker.ui.navigation
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
+import androidx.activity.ComponentActivity
 import com.hninakari.saletracker.data.model.*
 import com.hninakari.saletracker.ui.screen.*
 import com.hninakari.saletracker.viewmodel.*
@@ -20,96 +19,136 @@ fun NavigationDestinationsOverlay(
     toBuyViewModel: ToBuyViewModel,
     orderViewModel: OrderViewModel,
     profitViewModel: ProfitViewModel,
-    currentUserId: String = "default-user",
-    onSaveUserId: (String) -> Unit = {},
+    currentUserId: String,
+    onSaveUserId: (String) -> Unit,
     onAddSaleSuccess: (Sale) -> Unit,
     onAddExpenseSuccess: (Expense) -> Unit,
     onAddTransferSuccess: (Transfer) -> Unit,
     onShowAddPersonDialog: () -> Unit,
     onShowAddProductDialog: () -> Unit
 ) {
-    when {
-        navState.showOrderHistory.value -> {
-            Box(modifier = Modifier.fillMaxSize()) {
-                OrderHistoryScreen(
-                    viewModel = orderViewModel,
-                    onBack = { navState.showOrderHistory.value = false }
-                )
+    val context = LocalContext.current
+
+    // ------------------------------------------------------------
+    // PERSON DETAIL
+    // ------------------------------------------------------------
+    
+    if (navState.currentScreen.value == "person_detail" && navState.selectedPerson.value != null) {
+        val person = navState.selectedPerson.value!!
+        
+        PersonDetailScreen(
+            person = person,
+            debtViewModel = debtViewModel,
+            onBack = {
+                navState.currentScreen.value = "main"
+                navState.selectedPerson.value = null
+                navState.selectedTab.value = 3
+            },
+            onAddDebt = { personId ->
+                navState.selectedPerson.value = person
+                navState.showAddDebtDialog.value = true
+            },
+            onPayDebt = { debt ->
+                navState.selectedDebtId.value = debt.id
+                navState.showPaymentDialog.value = true
+            },
+            onPayAllDebt = { debt ->
+                debtViewModel.payAllDebt(debt.id)
+            },
+            onViewHistory = { person ->
+                // Navigate to person debt history
+                navState.selectedPerson.value = person
+                navState.currentScreen.value = "person_debt_history"
             }
-        }
-        navState.showOrderList.value -> {
-            Box(modifier = Modifier.fillMaxSize()) {
-                OrderListScreen(
-                    viewModel = orderViewModel,
-                    onOrderClick = { orderId ->
-                        navState.selectedOrderId.value = orderId
-                    },
-                    onNewOrder = { navState.showNewOrderDialog.value = true },
-                    onCancelOrder = { orderId ->
-                        orderViewModel.cancelOrder(orderId)
-                    },
-                    onCompleteOrder = { orderId ->
-                        orderViewModel.completeOrder(orderId, null)
-                    }
-                )
+        )
+        return
+    }
+
+    // ------------------------------------------------------------
+    // PERSON DEBT HISTORY
+    // ------------------------------------------------------------
+    
+    if (navState.currentScreen.value == "person_debt_history" && navState.selectedPerson.value != null) {
+        val person = navState.selectedPerson.value!!
+        
+        PersonDebtHistoryScreen(
+            person = person,
+            debtViewModel = debtViewModel,
+            onBack = {
+                navState.currentScreen.value = "person_detail"
             }
-        }
-        navState.showPurchaseHistory.value -> {
-            Box(modifier = Modifier.fillMaxSize()) {
-                PurchaseHistoryScreen(
-                    viewModel = toBuyViewModel,
-                    onBack = { navState.showPurchaseHistory.value = false }
-                )
+        )
+        return
+    }
+
+    // ------------------------------------------------------------
+    // DEBT LIST
+    // ------------------------------------------------------------
+    
+    if (navState.currentScreen.value == "debt_list") {
+        DebtListScreen(
+            personViewModel = personViewModel,
+            debtViewModel = debtViewModel,
+            onPersonClick = { person ->
+                navState.selectedPerson.value = person
+                navState.currentScreen.value = "person_detail"
             }
-        }
-        navState.currentScreen.value == "payment_history" -> {
-            Box(modifier = Modifier.fillMaxSize()) {
-                PaymentHistoryScreen(
-                    debtId = navState.selectedDebtId.value!!,
-                    debtViewModel = debtViewModel,
-                    onBack = {
-                        navState.currentScreen.value = "person_detail"
-                        navState.selectedDebtId.value = null
-                    }
-                )
+        )
+        return
+    }
+
+    // ------------------------------------------------------------
+    // PAYMENT HISTORY
+    // ------------------------------------------------------------
+    
+    if (navState.currentScreen.value == "payment_history" && navState.selectedDebtId.value != null) {
+        PaymentHistoryScreen(
+            debtId = navState.selectedDebtId.value!!,
+            debtViewModel = debtViewModel,
+            onBack = {
+                navState.currentScreen.value = "person_detail"
+                navState.selectedDebtId.value = null
             }
-        }
-        navState.currentScreen.value == "person_detail" -> {
-            Box(modifier = Modifier.fillMaxSize()) {
-                PersonDetailScreen(
-                    person = navState.selectedPerson.value!!,
-                    debtViewModel = debtViewModel,
-                    onBack = {
-                        navState.currentScreen.value = "main"
-                        navState.selectedPerson.value = null
-                        navState.selectedTab.value = 3
-                    },
-                    onAddDebt = { navState.showAddDebtDialog.value = true },
-                    onPayDebt = { debt ->
-                        navState.selectedDebtId.value = debt.id
-                        navState.showPaymentDialog.value = true
-                    },
-                    onPayAllDebt = { debt ->
-                        debtViewModel.payAllDebt(debt.id)
-                    },
-                    onViewHistory = { debtId ->
-                        navState.selectedDebtId.value = debtId
-                        navState.currentScreen.value = "payment_history"
-                    }
-                )
+        )
+        return
+    }
+
+    // ------------------------------------------------------------
+    // ADD PERSON DIALOG
+    // ------------------------------------------------------------
+    
+    if (navState.showAddPersonDialog.value) {
+        AddPersonDialog(
+            onDismiss = { navState.showAddPersonDialog.value = false },
+            onAddPerson = { name, phone, type, notes ->
+                personViewModel.addPerson(name, phone, type, notes)
+                navState.showAddPersonDialog.value = false
             }
-        }
-        navState.currentScreen.value == "debt_list" -> {
-            Box(modifier = Modifier.fillMaxSize()) {
-                DebtListScreen(
-                    personViewModel = personViewModel,
-                    debtViewModel = debtViewModel,
-                    onPersonClick = { person ->
-                        navState.selectedPerson.value = person
-                        navState.currentScreen.value = "person_detail"
-                    }
-                )
+        )
+    }
+
+    // ------------------------------------------------------------
+    // ADD PRODUCT DIALOG
+    // ------------------------------------------------------------
+    
+    if (navState.showAddProductDialog.value) {
+        AddProductDialog(
+            product = navState.selectedProduct.value,
+            onDismiss = {
+                navState.showAddProductDialog.value = false
+                navState.selectedProduct.value = null
+            },
+            onSave = { name, price ->
+                val currentProduct = navState.selectedProduct.value
+                if (currentProduct != null) {
+                    val updated = currentProduct.copy(name = name, price = price)
+                    productViewModel.updateProduct(updated)
+                } else {
+                    productViewModel.addProduct(name, price)
+                }
+                navState.showAddProductDialog.value = false
+                navState.selectedProduct.value = null
             }
-        }
+        )
     }
 }

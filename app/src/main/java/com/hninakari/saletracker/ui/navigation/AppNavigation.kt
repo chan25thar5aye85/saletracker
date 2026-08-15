@@ -1,13 +1,10 @@
 package com.hninakari.saletracker.ui.navigation
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -15,9 +12,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.navigationBars
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hninakari.saletracker.R
 import com.hninakari.saletracker.SaleTrackerApplication
@@ -172,12 +169,14 @@ fun AppNavigation(
     val screenTitle = when {
         navState.currentScreen.value == "person_detail" && navState.selectedPerson.value != null ->
             navState.selectedPerson.value?.name ?: ""
-        navState.currentScreen.value == "debt_list" -> "အကြွေးစာရင်း"
-        navState.currentScreen.value == "payment_history" -> "ငွေပေးချေမှုမှတ်တမ်း"
-        navState.showToBuyScreen.value -> "ဈေးဝယ်စာရင်း"
-        navState.showPurchaseHistory.value -> "ဝယ်ယူမှုမှတ်တမ်း"
-        navState.showOrderList.value -> "အမှာစာများ"
-        navState.showOrderHistory.value -> "အမှာစာမှတ်တမ်း"
+        navState.currentScreen.value == "debt_list" -> "Debt List"
+        navState.currentScreen.value == "person_debt_history" && navState.selectedPerson.value != null ->
+            "📜 ${navState.selectedPerson.value?.name} History"
+        navState.currentScreen.value == "payment_history" -> "Payment History"
+        navState.showToBuyScreen.value -> "To Buy"
+        navState.showPurchaseHistory.value -> "Purchase History"
+        navState.showOrderList.value -> "Orders"
+        navState.showOrderHistory.value -> "Order History"
         navState.showSalesHistory.value -> "Sales History"
         navState.showExpenseHistory.value -> "Expense History"
         navState.showTransferHistory.value -> "Transfer History"
@@ -210,6 +209,9 @@ fun AppNavigation(
     
     fun handleBack() {
         when {
+            navState.currentScreen.value == "person_debt_history" -> {
+                navState.currentScreen.value = "person_detail"
+            }
             navState.showTransferHistory.value -> {
                 navState.showTransferHistory.value = false
             }
@@ -261,7 +263,7 @@ fun AppNavigation(
     }
 
     // ============================================================
-    // MAIN LAYOUT (No Drawer)
+    // MAIN LAYOUT
     // ============================================================
 
     Box(
@@ -270,9 +272,31 @@ fun AppNavigation(
             .windowInsetsPadding(
                 WindowInsets.statusBars
             )
+            .windowInsetsPadding(
+                WindowInsets.navigationBars
+            )
     ) {
         // Main Content
         when {
+            navState.currentScreen.value == "debt_list" -> {
+                DebtListScreen(
+                    personViewModel = personViewModel,
+                    debtViewModel = debtViewModel,
+                    onPersonClick = { person ->
+                        navState.selectedPerson.value = person
+                        navState.currentScreen.value = "person_detail"
+                    }
+                )
+            }
+            navState.currentScreen.value == "person_debt_history" && navState.selectedPerson.value != null -> {
+                PersonDebtHistoryScreen(
+                    person = navState.selectedPerson.value!!,
+                    debtViewModel = debtViewModel,
+                    onBack = {
+                        navState.currentScreen.value = "person_detail"
+                    }
+                )
+            }
             navState.showSalesHistory.value -> {
                 SalesListScreen(
                     saleViewModel = saleViewModel
@@ -360,40 +384,6 @@ fun AppNavigation(
         }
 
         // ============================================================
-        // PAGE INDICATOR DOTS
-        // ============================================================
-        
-        if (!isDetailScreen && !isToBuyOrHistory && !isOrderScreen && !isSalesHistory && !isExpenseHistory && !isTransferHistory) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
-                    .windowInsetsPadding(
-                        WindowInsets.navigationBars
-                    )
-                    .padding(bottom = 80.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                repeat(TOTAL_TABS) { index ->
-                    val isSelected = index == actualPage
-                    Box(
-                        modifier = Modifier
-                            .size(if (isSelected) 10.dp else 8.dp)
-                            .padding(2.dp)
-                            .background(
-                                color = if (isSelected) 
-                                    MaterialTheme.colorScheme.primary 
-                                else 
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
-                                shape = CircleShape
-                            )
-                    )
-                }
-            }
-        }
-
-        // ============================================================
         // DRAGGABLE MENU FAB
         // ============================================================
         
@@ -401,16 +391,36 @@ fun AppNavigation(
             DraggableMenuFab(
                 onMenuSelected = { item ->
                     when (item) {
-                        "sale" -> navState.selectedTab.value = 0
-                        "expense" -> navState.selectedTab.value = 1
-                        "transfer" -> navState.selectedTab.value = 2
-                        "people" -> navState.selectedTab.value = 3
-                        "tobuy" -> navState.selectedTab.value = 4
-                        "settings" -> navState.showSettings.value = true
+                        "sale" -> {
+                            navState.selectedTab.value = 0
+                            navState.currentScreen.value = "main"
+                        }
+                        "expense" -> {
+                            navState.selectedTab.value = 1
+                            navState.currentScreen.value = "main"
+                        }
+                        "transfer" -> {
+                            navState.selectedTab.value = 2
+                            navState.currentScreen.value = "main"
+                        }
+                        "people" -> {
+                            navState.selectedTab.value = 3
+                            navState.currentScreen.value = "main"
+                        }
+                        "tobuy" -> {
+                            navState.selectedTab.value = 4
+                            navState.currentScreen.value = "main"
+                        }
+                        "debts" -> {
+                            navState.currentScreen.value = "debt_list"
+                        }
+                        "settings" -> {
+                            navState.showSettings.value = true
+                        }
                     }
                 },
                 onTap = {
-                    // No drawer, just toggle menu
+                    // Toggle menu
                 }
             )
         }

@@ -5,7 +5,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -25,105 +25,96 @@ import java.util.*
 fun PaymentHistoryScreen(
     debtId: Int,
     debtViewModel: DebtViewModel,
-    onBack: () -> Unit = {}
+    onBack: () -> Unit
 ) {
     val payments by debtViewModel.getPaymentsForDebt(debtId).collectAsState(initial = emptyList())
-    val allDebts by debtViewModel.allDebts.collectAsState(initial = emptyList())
-    val debt = allDebts.find { it.id == debtId }
-    val totalPaid = payments.sumOf { it.amount }
-    val dateFormat = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())
     
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
+    val colorScheme = MaterialTheme.colorScheme
+    val dateFormat = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())
+
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = colorScheme.background
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = onBack) {
-                Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.back))
-            }
-            Text(
-                text = stringResource(R.string.payment_history),
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
-            )
-        }
-        
-        Spacer(modifier = Modifier.height(8.dp))
-        
-        Card(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .shadow(elevation = 3.dp, shape = RoundedCornerShape(12.dp), clip = false),
-            shape = RoundedCornerShape(12.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface
-            )
+                .fillMaxSize()
+                .padding(16.dp)
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+            // ============================================================
+            // HEADER WITH BACK BUTTON AND TITLE
+            // ============================================================
+            
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                if (debt != null) {
-                    Text(
-                        text = "${stringResource(R.string.total)}: $${String.format("%.2f", debt.originalAmount)}",
-                        fontSize = 16.sp,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontWeight = FontWeight.Medium
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                }
-                Text(stringResource(R.string.total_paid), fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
-                Text(
-                    "$${String.format("%.2f", totalPaid)}",
-                    fontSize = 28.sp,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold
-                )
-                Text("${payments.size} ${stringResource(R.string.payments)}", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f))
-            }
-        }
-        
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        if (payments.isEmpty()) {
-            Card(
-                modifier = Modifier.fillMaxSize(),
-                shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(32.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text("💳", fontSize = 48.sp)
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = colorScheme.onSurface
+                        )
+                    }
+                    
                     Text(
-                        text = stringResource(R.string.no_payments_recorded),
-                        fontSize = 18.sp,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        text = "📜 Payment History",
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = colorScheme.onSurface
                     )
                 }
             }
-        } else {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Payment list header
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                items(payments) { payment ->
-                    PaymentItem(
-                        payment = payment,
-                        dateFormat = dateFormat
+                Text(
+                    text = "${stringResource(R.string.payment_history)} (${payments.size})",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = colorScheme.onSurface
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            if (payments.isEmpty()) {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = colorScheme.surfaceVariant.copy(alpha = 0.3f)
                     )
+                ) {
+                    Text(
+                        text = "No payments yet",
+                        modifier = Modifier.padding(12.dp),
+                        color = colorScheme.onSurfaceVariant,
+                        fontSize = 13.sp
+                    )
+                }
+            } else {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    items(payments) { payment ->
+                        DebtPaymentItem(
+                            payment = payment,
+                            dateFormat = dateFormat,
+                            colorScheme = colorScheme
+                        )
+                    }
                 }
             }
         }
@@ -131,17 +122,22 @@ fun PaymentHistoryScreen(
 }
 
 @Composable
-fun PaymentItem(
+fun DebtPaymentItem(
     payment: DebtPayment,
-    dateFormat: SimpleDateFormat
+    dateFormat: SimpleDateFormat,
+    colorScheme: ColorScheme
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .shadow(elevation = 2.dp, shape = RoundedCornerShape(10.dp), clip = false),
-        shape = RoundedCornerShape(10.dp),
+            .shadow(
+                elevation = 1.dp,
+                shape = RoundedCornerShape(8.dp),
+                clip = false
+            ),
+        shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = colorScheme.surface
         )
     ) {
         Row(
@@ -153,24 +149,35 @@ fun PaymentItem(
         ) {
             Column {
                 Text(
-                    text = "$${String.format("%.2f", payment.amount)}",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
+                    text = "💵 Payment",
+                    fontSize = 12.sp,
+                    color = colorScheme.onSurfaceVariant
                 )
+                
                 if (payment.note.isNotEmpty()) {
                     Text(
-                        text = payment.note,
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        text = "📝 ${payment.note}",
+                        fontSize = 11.sp,
+                        color = colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                     )
                 }
             }
-            Text(
-                text = dateFormat.format(Date(payment.date)),
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
-            )
+
+            Column(
+                horizontalAlignment = Alignment.End
+            ) {
+                Text(
+                    text = "$${String.format("%.2f", payment.amount)}",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = colorScheme.primary
+                )
+                Text(
+                    text = dateFormat.format(Date(payment.date)),
+                    fontSize = 10.sp,
+                    color = colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                )
+            }
         }
     }
 }

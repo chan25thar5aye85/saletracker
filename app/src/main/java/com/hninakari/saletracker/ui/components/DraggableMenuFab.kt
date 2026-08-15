@@ -7,7 +7,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -54,11 +54,11 @@ fun DraggableMenuFab(
         MenuItem("transfer", Icons.Default.SwapHoriz, "Transfer"),
         MenuItem("people", Icons.Default.People, "People"),
         MenuItem("tobuy", Icons.Default.ShoppingCart, "To Buy"),
+        MenuItem("debts", Icons.Default.Money, "Debts"),
         MenuItem("settings", Icons.Default.Settings, "Settings")
     )
 
     Box(modifier = modifier.fillMaxSize()) {
-
         Box(
             modifier = Modifier
                 .align(Alignment.BottomStart)
@@ -68,9 +68,8 @@ fun DraggableMenuFab(
                         fabOffsetY.roundToInt()
                     )
                 }
-                .padding(start = 16.dp, bottom = 70.dp)
+                .padding(start = 16.dp, bottom = 24.dp)
         ) {
-
             AnimatedVisibility(
                 visible = isMenuExpanded,
                 enter = fadeIn() + expandVertically(expandFrom = Alignment.Bottom),
@@ -81,7 +80,7 @@ fun DraggableMenuFab(
             ) {
                 Column(
                     modifier = Modifier
-                        .width(170.dp)
+                        .width(180.dp)
                         .shadow(8.dp, RoundedCornerShape(12.dp))
                         .clip(RoundedCornerShape(12.dp))
                         .background(MaterialTheme.colorScheme.surface)
@@ -101,10 +100,7 @@ fun DraggableMenuFab(
                             Icon(
                                 imageVector = item.icon,
                                 contentDescription = null,
-                                tint = if (item.id == "settings") 
-                                    MaterialTheme.colorScheme.primary 
-                                else 
-                                    MaterialTheme.colorScheme.primary,
+                                tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(18.dp)
                             )
 
@@ -112,11 +108,7 @@ fun DraggableMenuFab(
 
                             Text(
                                 text = item.label,
-                                fontSize = 14.sp,
-                                color = if (item.id == "settings")
-                                    MaterialTheme.colorScheme.primary
-                                else
-                                    MaterialTheme.colorScheme.onSurface
+                                fontSize = 14.sp
                             )
                         }
 
@@ -141,7 +133,7 @@ fun DraggableMenuFab(
                     .align(Alignment.BottomStart)
                     .size(56.dp)
                     .pointerInput(Unit) {
-                        detectDragGestures(
+                        detectDragGesturesAfterLongPress(
                             onDragStart = {
                                 isDragging = true
                                 isMenuExpanded = false
