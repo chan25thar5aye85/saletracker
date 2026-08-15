@@ -124,6 +124,7 @@ fun AppNavigation(
     val isDetailScreen = navState.currentScreen.value != "main"
     val isToBuyOrHistory = navState.showToBuyScreen.value || navState.showPurchaseHistory.value
     val isOrderScreen = navState.showOrderList.value || navState.showOrderHistory.value
+    val isSalesHistory = navState.showSalesHistory.value
 
     // Pager
     val TOTAL_TABS = 5
@@ -200,6 +201,7 @@ fun AppNavigation(
         navState.showPurchaseHistory.value -> "ဝယ်ယူမှုမှတ်တမ်း"
         navState.showOrderList.value -> "အမှာစာများ"
         navState.showOrderHistory.value -> "အမှာစာမှတ်တမ်း"
+        navState.showSalesHistory.value -> "Sales History"
         actualPage == 0 -> stringResource(R.string.add_sale)
         actualPage == 1 -> stringResource(R.string.add_expense)
         actualPage == 2 -> stringResource(R.string.add_transfer)
@@ -215,27 +217,21 @@ fun AppNavigation(
         else -> ""
     }
 
-    val showBackButton = isDetailScreen || isToBuyOrHistory || isOrderScreen
-
-    // ⭐ REMOVED: Success dialogs - no more confirmation popups!
-    // Sales now save silently with just a form reset
+    val showBackButton = isDetailScreen || isToBuyOrHistory || isOrderScreen || isSalesHistory
 
     // Sale Success
     val onAddSaleSuccess: (Sale) -> Unit = { sale ->
         saleViewModel.addSale(sale)
-        // ⭐ No dialog - just show snackbar or nothing
     }
 
     // Expense Success
     val onAddExpenseSuccess: (Expense) -> Unit = { expense ->
         expenseViewModel.addExpense(expense)
-        // ⭐ No dialog
     }
 
     // Transfer Success
     val onAddTransferSuccess: (Transfer) -> Unit = { transfer ->
         transferViewModel.addTransfer(transfer)
-        // ⭐ No dialog
     }
 
     // Main Drawer + App
@@ -256,6 +252,9 @@ fun AppNavigation(
                     showBack = showBackButton,
                     onBack = {
                         when {
+                            navState.showSalesHistory.value -> {
+                                navState.showSalesHistory.value = false
+                            }
                             navState.showOrderHistory.value -> {
                                 navState.showOrderHistory.value = false
                             }
@@ -298,7 +297,7 @@ fun AppNavigation(
                     onAddDebtClick = {
                         navState.showAddDebtDialog.value = true
                     },
-                    showMenu = !showBackButton && !isDetailScreen && !isToBuyOrHistory && !isOrderScreen,
+                    showMenu = !showBackButton && !isDetailScreen && !isToBuyOrHistory && !isOrderScreen && !isSalesHistory,
                     onMenuClick = {
                         scope.launch {
                             if (drawerState.isClosed) {
@@ -311,7 +310,7 @@ fun AppNavigation(
                 )
             },
             bottomBar = {
-                if (!isDetailScreen && !isToBuyOrHistory && !isOrderScreen) {
+                if (!isDetailScreen && !isToBuyOrHistory && !isOrderScreen && !isSalesHistory) {
                     AppBottomBar(
                         selectedTab = actualPage,
                         onTabSelected = { tab ->
@@ -328,60 +327,73 @@ fun AppNavigation(
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
-                HorizontalPager(
-                    state = pagerState,
-                    modifier = Modifier.fillMaxSize(),
-                    beyondViewportPageCount = 1
-                ) { virtualPage ->
-                    val page = virtualPage % 5
-                    when (page) {
-                        0 -> {
-                            SaleEntryScreen(
-                                saleViewModel = saleViewModel,
-                                
-                                onSaleAdded = onAddSaleSuccess
-                            )
-                        }
-                        1 -> {
-                            ExpenseEntryScreen(
-                                onExpenseAdded = onAddExpenseSuccess
-                            )
-                        }
-                        2 -> {
-                            TransferEntryScreen(
-                                onTransferAdded = onAddTransferSuccess
-                            )
-                        }
-                        3 -> {
-                            PersonListScreen(
-                                personViewModel = personViewModel,
-                                onPersonClick = { person ->
-                                    navState.selectedPerson.value = person
-                                    navState.currentScreen.value = "person_detail"
-                                },
-                                onAddClick = {
-                                    navState.showAddPersonDialog.value = true
+                when {
+                    // Show Sales History Screen
+                    navState.showSalesHistory.value -> {
+                        SalesListScreen(
+                            saleViewModel = saleViewModel
+                        )
+                    }
+                    // Show other screens
+                    else -> {
+                        HorizontalPager(
+                            state = pagerState,
+                            modifier = Modifier.fillMaxSize(),
+                            beyondViewportPageCount = 1
+                        ) { virtualPage ->
+                            val page = virtualPage % 5
+                            when (page) {
+                                0 -> {
+                                    SaleEntryScreen(
+                                        saleViewModel = saleViewModel,
+                                        onSaleAdded = onAddSaleSuccess,
+                                        onHistoryClick = {
+                                            navState.showSalesHistory.value = true
+                                        }
+                                    )
                                 }
-                            )
-                        }
-                        4 -> {
-                            ToBuyScreen(
-                                viewModel = toBuyViewModel,
-                                onAddItem = {
-                                    navState.showAddToBuyItemDialog.value = true
-                                },
-                                onMarkBought = { itemIds ->
-                                    navState.selectedToBuyItemIds.value = itemIds
-                                    navState.showMarkAsBoughtDialog.value = true
-                                },
-                                onCreateOrder = { itemIds ->
-                                    navState.showNewOrderDialog.value = true
-                                    navState.selectedToBuyItemIds.value = itemIds
-                                },
-                                onHistoryClick = {
-                                    navState.showPurchaseHistory.value = true
+                                1 -> {
+                                    ExpenseEntryScreen(
+                                        onExpenseAdded = onAddExpenseSuccess
+                                    )
                                 }
-                            )
+                                2 -> {
+                                    TransferEntryScreen(
+                                        onTransferAdded = onAddTransferSuccess
+                                    )
+                                }
+                                3 -> {
+                                    PersonListScreen(
+                                        personViewModel = personViewModel,
+                                        onPersonClick = { person ->
+                                            navState.selectedPerson.value = person
+                                            navState.currentScreen.value = "person_detail"
+                                        },
+                                        onAddClick = {
+                                            navState.showAddPersonDialog.value = true
+                                        }
+                                    )
+                                }
+                                4 -> {
+                                    ToBuyScreen(
+                                        viewModel = toBuyViewModel,
+                                        onAddItem = {
+                                            navState.showAddToBuyItemDialog.value = true
+                                        },
+                                        onMarkBought = { itemIds ->
+                                            navState.selectedToBuyItemIds.value = itemIds
+                                            navState.showMarkAsBoughtDialog.value = true
+                                        },
+                                        onCreateOrder = { itemIds ->
+                                            navState.showNewOrderDialog.value = true
+                                            navState.selectedToBuyItemIds.value = itemIds
+                                        },
+                                        onHistoryClick = {
+                                            navState.showPurchaseHistory.value = true
+                                        }
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -423,20 +435,4 @@ fun AppNavigation(
         toBuyViewModel = toBuyViewModel,
         orderViewModel = orderViewModel
     )
-
-    // ⭐ REMOVED: SuccessDialogs - no more confirmation popups!
-    // SuccessDialogs(
-    //     showSaleSuccess = navState.showSaleSuccess.value,
-    //     showExpenseSuccess = navState.showExpenseSuccess.value,
-    //     showTransferSuccess = navState.showTransferSuccess.value,
-    //     onSaleDismiss = {
-    //         navState.showSaleSuccess.value = false
-    //     },
-    //     onExpenseDismiss = {
-    //         navState.showExpenseSuccess.value = false
-    //     },
-    //     onTransferDismiss = {
-    //         navState.showTransferSuccess.value = false
-    //     }
-    // )
 }
