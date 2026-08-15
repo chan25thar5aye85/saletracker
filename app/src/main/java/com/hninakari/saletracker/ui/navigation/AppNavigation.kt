@@ -1,25 +1,30 @@
 package com.hninakari.saletracker.ui.navigation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hninakari.saletracker.R
 import com.hninakari.saletracker.SaleTrackerApplication
 import com.hninakari.saletracker.core.UserPreferences
 import com.hninakari.saletracker.data.model.*
 import com.hninakari.saletracker.data.repository.*
-import com.hninakari.saletracker.ui.components.AppBottomBar
-import com.hninakari.saletracker.ui.components.AppDrawer
-import com.hninakari.saletracker.ui.components.AppTopBar
+import com.hninakari.saletracker.ui.components.DraggableMenuFab
 import com.hninakari.saletracker.ui.screen.*
 import com.hninakari.saletracker.viewmodel.*
 import kotlinx.coroutines.CoroutineScope
@@ -48,56 +53,7 @@ fun AppNavigation(
 
     val userPrefs = remember { UserPreferences.getInstance(context) }
     val currentUserId by userPrefs.userId.collectAsState()
-    // Read theme from UserPreferences
     val currentTheme by userPrefs.themeMode.collectAsState()
-
-    // Drawer state
-    val drawerState = rememberDrawerState(DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
-
-    LaunchedEffect(currentUserId) {
-        if (currentUserId.isNotEmpty() && currentUserId != "default-user") {
-            application?.startRealtimeListening()
-        }
-    }
-
-    val saleViewModel: SaleViewModel = viewModel(factory = SaleViewModelFactory(saleRepository))
-    val expenseViewModel: ExpenseViewModel = viewModel(factory = ExpenseViewModelFactory(expenseRepository))
-    val transferViewModel: TransferViewModel = viewModel(factory = TransferViewModelFactory(transferRepository))
-    val personViewModel: PersonViewModel = viewModel(factory = PersonViewModelFactory(personRepository))
-    val debtViewModel: DebtViewModel = viewModel(factory = DebtViewModelFactory(debtRepository))
-    val productViewModel: ProductViewModel = viewModel(
-        factory = ProductViewModelFactory(productRepository, productSupplierRepository)
-    )
-    val toBuyViewModel: ToBuyViewModel = viewModel(
-        factory = ToBuyViewModelFactory(toBuyRepository, productRepository)
-    )
-    val orderViewModel: OrderViewModel = viewModel(
-        factory = OrderViewModelFactory(orderRepository, productRepository, personRepository)
-    )
-    val profitViewModel: ProfitViewModel = viewModel(
-        factory = ProfitViewModelFactory(saleRepository, expenseRepository, transferRepository)
-    )
-
-    // Handle drawer navigation
-    fun handleDrawerNavigation(destination: String) {
-        when (destination) {
-            "settings" -> {
-                navState.showSettings.value = true
-            }
-            "sync" -> {
-                application?.let {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        try {
-                            it.syncManager.syncAll()
-                        } catch (e: Exception) {
-                            // Handle error
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     // Settings Screen
     if (navState.showSettings.value) {
@@ -118,6 +74,24 @@ fun AppNavigation(
         )
         return
     }
+
+    val saleViewModel: SaleViewModel = viewModel(factory = SaleViewModelFactory(saleRepository))
+    val expenseViewModel: ExpenseViewModel = viewModel(factory = ExpenseViewModelFactory(expenseRepository))
+    val transferViewModel: TransferViewModel = viewModel(factory = TransferViewModelFactory(transferRepository))
+    val personViewModel: PersonViewModel = viewModel(factory = PersonViewModelFactory(personRepository))
+    val debtViewModel: DebtViewModel = viewModel(factory = DebtViewModelFactory(debtRepository))
+    val productViewModel: ProductViewModel = viewModel(
+        factory = ProductViewModelFactory(productRepository, productSupplierRepository)
+    )
+    val toBuyViewModel: ToBuyViewModel = viewModel(
+        factory = ToBuyViewModelFactory(toBuyRepository, productRepository)
+    )
+    val orderViewModel: OrderViewModel = viewModel(
+        factory = OrderViewModelFactory(orderRepository, productRepository, personRepository)
+    )
+    val profitViewModel: ProfitViewModel = viewModel(
+        factory = ProfitViewModelFactory(saleRepository, expenseRepository, transferRepository)
+    )
 
     val dateFormat = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())
     val currentDate = dateFormat.format(Date())
@@ -215,15 +189,6 @@ fun AppNavigation(
         else -> "Akari"
     }
 
-    val screenSubtitle = when {
-        actualPage == 0 -> currentDate
-        actualPage == 1 -> currentDate
-        actualPage == 2 -> currentDate
-        else -> ""
-    }
-
-    val showBackButton = isDetailScreen || isToBuyOrHistory || isOrderScreen || isSalesHistory || isExpenseHistory || isTransferHistory
-
     // Sale Success
     val onAddSaleSuccess: (Sale) -> Unit = { sale ->
         saleViewModel.addSale(sale)
@@ -243,7 +208,6 @@ fun AppNavigation(
     // HANDLE SYSTEM BACK BUTTON
     // ============================================================
     
-    // Function to handle back navigation
     fun handleBack() {
         when {
             navState.showTransferHistory.value -> {
@@ -290,192 +254,193 @@ fun AppNavigation(
         }
     }
 
-    // Register back handler
+    val showBackButton = isDetailScreen || isToBuyOrHistory || isOrderScreen || isSalesHistory || isExpenseHistory || isTransferHistory
+
     BackHandler(enabled = showBackButton || navState.showSettings.value) {
         handleBack()
     }
 
-    // Main Drawer + App
-    AppDrawer(
-        drawerState = drawerState,
-        scope = scope,
-        currentUserId = currentUserId,
-        onNavigate = { destination ->
-            handleDrawerNavigation(destination)
-        }
-    ) {
+    // ============================================================
+    // MAIN LAYOUT (No Drawer)
+    // ============================================================
 
-        Scaffold(
-            topBar = {
-                AppTopBar(
-                    title = screenTitle,
-                    subtitle = screenSubtitle,
-                    showBack = showBackButton,
-                    onBack = {
-                        handleBack()
-                    },
-                    showFilter = false,
-                    onFilterClick = { },
-                    filterExpanded = false,
-                    onFilterSelected = { },
-                    currentFilter = saleViewModel.selectedFilter.value,
-                    showAddPerson = actualPage == 3 && !isDetailScreen,
-                    onAddPersonClick = {
-                        navState.showAddPersonDialog.value = true
-                    },
-                    showAddDebt = navState.currentScreen.value == "person_detail" &&
-                            navState.selectedPerson.value != null,
-                    onAddDebtClick = {
-                        navState.showAddDebtDialog.value = true
-                    },
-                    showMenu = !showBackButton && !isDetailScreen && !isToBuyOrHistory && !isOrderScreen && !isSalesHistory && !isExpenseHistory && !isTransferHistory,
-                    onMenuClick = {
-                        scope.launch {
-                            if (drawerState.isClosed) {
-                                drawerState.open()
-                            } else {
-                                drawerState.close()
-                            }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .windowInsetsPadding(
+                WindowInsets.statusBars
+            )
+    ) {
+        // Main Content
+        when {
+            navState.showSalesHistory.value -> {
+                SalesListScreen(
+                    saleViewModel = saleViewModel
+                )
+            }
+            navState.showExpenseHistory.value -> {
+                ExpenseListScreen(
+                    expenseViewModel = expenseViewModel
+                )
+            }
+            navState.showTransferHistory.value -> {
+                TransferListScreen(
+                    transferViewModel = transferViewModel
+                )
+            }
+            else -> {
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier.fillMaxSize(),
+                    beyondViewportPageCount = 1
+                ) { virtualPage ->
+                    val page = virtualPage % 5
+                    when (page) {
+                        0 -> {
+                            SaleEntryScreen(
+                                saleViewModel = saleViewModel,
+                                onSaleAdded = onAddSaleSuccess,
+                                onHistoryClick = {
+                                    navState.showSalesHistory.value = true
+                                }
+                            )
+                        }
+                        1 -> {
+                            ExpenseEntryScreen(
+                                expenseViewModel = expenseViewModel,
+                                onExpenseAdded = onAddExpenseSuccess,
+                                onHistoryClick = {
+                                    navState.showExpenseHistory.value = true
+                                }
+                            )
+                        }
+                        2 -> {
+                            TransferEntryScreen(
+                                transferViewModel = transferViewModel,
+                                onTransferAdded = onAddTransferSuccess,
+                                onHistoryClick = {
+                                    navState.showTransferHistory.value = true
+                                }
+                            )
+                        }
+                        3 -> {
+                            PersonListScreen(
+                                personViewModel = personViewModel,
+                                onPersonClick = { person ->
+                                    navState.selectedPerson.value = person
+                                    navState.currentScreen.value = "person_detail"
+                                },
+                                onAddClick = {
+                                    navState.showAddPersonDialog.value = true
+                                }
+                            )
+                        }
+                        4 -> {
+                            ToBuyScreen(
+                                viewModel = toBuyViewModel,
+                                onAddItem = {
+                                    navState.showAddToBuyItemDialog.value = true
+                                },
+                                onMarkBought = { itemIds ->
+                                    navState.selectedToBuyItemIds.value = itemIds
+                                    navState.showMarkAsBoughtDialog.value = true
+                                },
+                                onCreateOrder = { itemIds ->
+                                    navState.showNewOrderDialog.value = true
+                                    navState.selectedToBuyItemIds.value = itemIds
+                                },
+                                onHistoryClick = {
+                                    navState.showPurchaseHistory.value = true
+                                }
+                            )
                         }
                     }
-                )
-            },
-            bottomBar = {
-                if (!isDetailScreen && !isToBuyOrHistory && !isOrderScreen && !isSalesHistory && !isExpenseHistory && !isTransferHistory) {
-                    AppBottomBar(
-                        selectedTab = actualPage,
-                        onTabSelected = { tab ->
-                            if (actualPage != tab) {
-                                navState.selectedTab.value = tab
-                            }
-                        }
+                }
+            }
+        }
+
+        // ============================================================
+        // PAGE INDICATOR DOTS
+        // ============================================================
+        
+        if (!isDetailScreen && !isToBuyOrHistory && !isOrderScreen && !isSalesHistory && !isExpenseHistory && !isTransferHistory) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+                    .windowInsetsPadding(
+                        WindowInsets.navigationBars
+                    )
+                    .padding(bottom = 80.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                repeat(TOTAL_TABS) { index ->
+                    val isSelected = index == actualPage
+                    Box(
+                        modifier = Modifier
+                            .size(if (isSelected) 10.dp else 8.dp)
+                            .padding(2.dp)
+                            .background(
+                                color = if (isSelected) 
+                                    MaterialTheme.colorScheme.primary 
+                                else 
+                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
+                                shape = CircleShape
+                            )
                     )
                 }
             }
-        ) { paddingValues ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-            ) {
-                when {
-                    // Show Sales History Screen
-                    navState.showSalesHistory.value -> {
-                        SalesListScreen(
-                            saleViewModel = saleViewModel
-                        )
-                    }
-                    // Show Expense History Screen
-                    navState.showExpenseHistory.value -> {
-                        ExpenseListScreen(
-                            expenseViewModel = expenseViewModel
-                        )
-                    }
-                    // Show Transfer History Screen
-                    navState.showTransferHistory.value -> {
-                        TransferListScreen(
-                            transferViewModel = transferViewModel
-                        )
-                    }
-                    // Show other screens
-                    else -> {
-                        HorizontalPager(
-                            state = pagerState,
-                            modifier = Modifier.fillMaxSize(),
-                            beyondViewportPageCount = 1
-                        ) { virtualPage ->
-                            val page = virtualPage % 5
-                            when (page) {
-                                0 -> {
-                                    SaleEntryScreen(
-                                        saleViewModel = saleViewModel,
-                                        onSaleAdded = onAddSaleSuccess,
-                                        onHistoryClick = {
-                                            navState.showSalesHistory.value = true
-                                        }
-                                    )
-                                }
-                                1 -> {
-                                    ExpenseEntryScreen(
-                                        expenseViewModel = expenseViewModel,
-                                        onExpenseAdded = onAddExpenseSuccess,
-                                        onHistoryClick = {
-                                            navState.showExpenseHistory.value = true
-                                        }
-                                    )
-                                }
-                                2 -> {
-                                    TransferEntryScreen(
-                                        transferViewModel = transferViewModel,
-                                        onTransferAdded = onAddTransferSuccess,
-                                        onHistoryClick = {
-                                            navState.showTransferHistory.value = true
-                                        }
-                                    )
-                                }
-                                3 -> {
-                                    PersonListScreen(
-                                        personViewModel = personViewModel,
-                                        onPersonClick = { person ->
-                                            navState.selectedPerson.value = person
-                                            navState.currentScreen.value = "person_detail"
-                                        },
-                                        onAddClick = {
-                                            navState.showAddPersonDialog.value = true
-                                        }
-                                    )
-                                }
-                                4 -> {
-                                    ToBuyScreen(
-                                        viewModel = toBuyViewModel,
-                                        onAddItem = {
-                                            navState.showAddToBuyItemDialog.value = true
-                                        },
-                                        onMarkBought = { itemIds ->
-                                            navState.selectedToBuyItemIds.value = itemIds
-                                            navState.showMarkAsBoughtDialog.value = true
-                                        },
-                                        onCreateOrder = { itemIds ->
-                                            navState.showNewOrderDialog.value = true
-                                            navState.selectedToBuyItemIds.value = itemIds
-                                        },
-                                        onHistoryClick = {
-                                            navState.showPurchaseHistory.value = true
-                                        }
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-
-                NavigationDestinationsOverlay(
-                    navState = navState,
-                    saleViewModel = saleViewModel,
-                    expenseViewModel = expenseViewModel,
-                    transferViewModel = transferViewModel,
-                    personViewModel = personViewModel,
-                    debtViewModel = debtViewModel,
-                    productViewModel = productViewModel,
-                    toBuyViewModel = toBuyViewModel,
-                    orderViewModel = orderViewModel,
-                    profitViewModel = profitViewModel,
-                    currentUserId = currentUserId,
-                    onSaveUserId = { userId ->
-                        userPrefs.saveUserId(userId)
-                    },
-                    onAddSaleSuccess = onAddSaleSuccess,
-                    onAddExpenseSuccess = onAddExpenseSuccess,
-                    onAddTransferSuccess = onAddTransferSuccess,
-                    onShowAddPersonDialog = {
-                        navState.showAddPersonDialog.value = true
-                    },
-                    onShowAddProductDialog = {
-                        navState.showAddProductDialog.value = true
-                    }
-                )
-            }
         }
+
+        // ============================================================
+        // DRAGGABLE MENU FAB
+        // ============================================================
+        
+        if (!isDetailScreen && !isToBuyOrHistory && !isOrderScreen && !isSalesHistory && !isExpenseHistory && !isTransferHistory) {
+            DraggableMenuFab(
+                onMenuSelected = { item ->
+                    when (item) {
+                        "sale" -> navState.selectedTab.value = 0
+                        "expense" -> navState.selectedTab.value = 1
+                        "transfer" -> navState.selectedTab.value = 2
+                        "people" -> navState.selectedTab.value = 3
+                        "tobuy" -> navState.selectedTab.value = 4
+                        "settings" -> navState.showSettings.value = true
+                    }
+                },
+                onTap = {
+                    // No drawer, just toggle menu
+                }
+            )
+        }
+
+        // Navigation Destinations Overlay
+        NavigationDestinationsOverlay(
+            navState = navState,
+            saleViewModel = saleViewModel,
+            expenseViewModel = expenseViewModel,
+            transferViewModel = transferViewModel,
+            personViewModel = personViewModel,
+            debtViewModel = debtViewModel,
+            productViewModel = productViewModel,
+            toBuyViewModel = toBuyViewModel,
+            orderViewModel = orderViewModel,
+            profitViewModel = profitViewModel,
+            currentUserId = currentUserId,
+            onSaveUserId = { userId ->
+                userPrefs.saveUserId(userId)
+            },
+            onAddSaleSuccess = onAddSaleSuccess,
+            onAddExpenseSuccess = onAddExpenseSuccess,
+            onAddTransferSuccess = onAddTransferSuccess,
+            onShowAddPersonDialog = {
+                navState.showAddPersonDialog.value = true
+            },
+            onShowAddProductDialog = {
+                navState.showAddProductDialog.value = true
+            }
+        )
     }
 
     DialogManager(

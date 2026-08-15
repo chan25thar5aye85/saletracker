@@ -1,11 +1,10 @@
 package com.hninakari.saletracker.ui.screen
 
-import android.content.Context
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -53,61 +52,73 @@ fun UserSettingsScreen(
         mutableStateOf(currentLanguage)
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "⚙️ Settings",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = appColors.barContent
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = appColors.barContent
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = appColors.barBackground,
-                    titleContentColor = appColors.barContent,
-                    navigationIconContentColor = appColors.barContent
-                )
-            )
-        }
-    ) { paddingValues ->
+    // Handle system back button
+    BackHandler {
+        onBack()
+    }
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+            .windowInsetsPadding(
+                androidx.compose.foundation.layout.WindowInsets.statusBars
+            ),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+
+        // ====================================================
+        // HEADER WITH BACK BUTTON
+        // ====================================================
+        
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
+            // Back button
+            IconButton(
+                onClick = onBack,
+                modifier = Modifier.size(48.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back",
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+            }
+            
+            Text(
+                text = "⚙️ Settings",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            
+            // Empty spacer for alignment
+            Spacer(modifier = Modifier.size(48.dp))
+        }
 
-            // ====================================================
-            // THEME CARD
-            // ====================================================
+        Spacer(modifier = Modifier.height(8.dp))
 
-            Card(
+        // ====================================================
+        // THEME CARD
+        // ====================================================
+
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .uniformCard(),
+            shape = RoundedCornerShape(12.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            )
+        ) {
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .uniformCard(),
-                shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
+                    .padding(16.dp)
                 ) {
 
                     Text(
@@ -220,31 +231,26 @@ fun UserSettingsScreen(
                         )
                     )
 
-                    // Language options
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        // Myanmar option
                         LanguageOption(
                             label = "🇲🇲 မြန်မာ (Myanmar)",
                             isSelected = selectedLanguage == LanguageManager.MYANMAR,
                             onClick = {
                                 selectedLanguage = LanguageManager.MYANMAR
                                 LanguageManager.setLanguage(context, LanguageManager.MYANMAR)
-                                // Restart activity to apply language change
                                 (context as? androidx.activity.ComponentActivity)?.recreate()
                             }
                         )
 
-                        // English option
                         LanguageOption(
                             label = "🇬🇧 English",
                             isSelected = selectedLanguage == LanguageManager.ENGLISH,
                             onClick = {
                                 selectedLanguage = LanguageManager.ENGLISH
                                 LanguageManager.setLanguage(context, LanguageManager.ENGLISH)
-                                // Restart activity to apply language change
                                 (context as? androidx.activity.ComponentActivity)?.recreate()
                             }
                         )
@@ -578,7 +584,6 @@ fun UserSettingsScreen(
             )
         }
     }
-}
 
 // ================================================================
 // THEME BUTTON

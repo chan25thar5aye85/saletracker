@@ -10,11 +10,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import com.hninakari.saletracker.core.UserPreferences
 import com.hninakari.saletracker.core.ui.theme.AppTheme
 import com.hninakari.saletracker.core.ui.theme.AppThemeColors
 import com.hninakari.saletracker.ui.navigation.AppNavigation
@@ -41,17 +45,14 @@ class MainActivity : ComponentActivity() {
         // Application / repositories
         val application = application as SaleTrackerApplication
 
+        // Compose
         setContent {
-
             AppTheme {
-
                 SystemBarsUpdater()
-
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-
                     AppNavigation(
                         saleRepository = application.saleRepository,
                         expenseRepository = application.expenseRepository,
@@ -69,13 +70,21 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+// ============================================================
+// SYSTEM BARS - THEME BASED HARDCODED
+// ============================================================
+
 @Composable
 fun SystemBarsUpdater() {
 
     val view = LocalView.current
+    val context = LocalContext.current
     val appColors = AppThemeColors.colors
     val barColor = appColors.barBackground
-    val contentColor = appColors.barContent
+    
+    // Get current theme from UserPreferences
+    val userPrefs = remember { UserPreferences.getInstance(context) }
+    val currentTheme by userPrefs.themeMode.collectAsState()
 
     SideEffect {
 
@@ -83,17 +92,28 @@ fun SystemBarsUpdater() {
 
         if (window != null) {
 
+            // Set status bar to match the app's bar color
             val color = barColor.toArgb()
-
             window.statusBarColor = color
             window.navigationBarColor = color
+
+            // -------------------------------------------------
+            // THEME BASED STATUS BAR ICON COLOR
+            // -------------------------------------------------
 
             val controller = WindowCompat.getInsetsController(
                 window,
                 view
             )
 
-            val useDarkIcons = contentColor.luminance() > 0.5f
+            // true = dark icons (black), false = light icons (white)
+            val useDarkIcons = when (currentTheme) {
+                "purple" -> true   // Purple theme → Dark/Black icons
+                "green" -> true    // Green theme → Dark/Black icons
+                "dark" -> false    // Dark theme → White icons
+                "light" -> true    // Light theme → Dark/Black icons
+                else -> true       // Default → Dark/Black icons
+            }
 
             controller.isAppearanceLightStatusBars = useDarkIcons
             controller.isAppearanceLightNavigationBars = useDarkIcons
