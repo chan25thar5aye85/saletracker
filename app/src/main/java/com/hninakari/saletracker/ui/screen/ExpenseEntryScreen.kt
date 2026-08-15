@@ -34,7 +34,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.roundToInt
 
-// Helper function - accessible everywhere
 fun getCategoryDisplayName(category: ExpenseCategory): String {
     return when (category) {
         ExpenseCategory.INVENTORY -> "ကုန်ပစ္စည်း"
@@ -60,7 +59,6 @@ fun ExpenseEntryScreen(
     
     val allExpenses by viewModel.allExpenses.collectAsState(initial = emptyList())
     
-    // Filter only today's expenses
     val todayExpenses = remember(allExpenses) {
         val todayStart = DateUtils.getFilterStartTime(DateUtils.DateFilter.TODAY)
         allExpenses.filter { 
@@ -77,7 +75,6 @@ fun ExpenseEntryScreen(
     val focusManager = LocalFocusManager.current
     val scope = rememberCoroutineScope()
 
-    // FAB position state
     var fabOffsetX by remember { mutableStateOf(0f) }
     var fabOffsetY by remember { mutableStateOf(0f) }
 
@@ -87,10 +84,19 @@ fun ExpenseEntryScreen(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp)
-                .padding(bottom = 60.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .padding(bottom = 100.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Title
+            Text(
+                text = "💸 Add Expense",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = colorScheme.onSurface,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+            )
 
             // ============================================================
             // FORM CARD
@@ -112,12 +118,15 @@ fun ExpenseEntryScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-
-                    // --------------------------------------------------------
-                    // EXPENSE TYPE - Business/Personal Chips
-                    // --------------------------------------------------------
+                    // Expense Type
+                    Text(
+                        text = stringResource(R.string.expense_type),
+                        fontSize = 14.sp,
+                        color = colorScheme.onSurfaceVariant,
+                        modifier = Modifier.fillMaxWidth()
+                    )
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -150,10 +159,7 @@ fun ExpenseEntryScreen(
                         )
                     }
 
-                    // --------------------------------------------------------
-                    // AMOUNT
-                    // --------------------------------------------------------
-
+                    // Amount
                     OutlinedTextField(
                         value = amount,
                         onValueChange = {
@@ -189,10 +195,7 @@ fun ExpenseEntryScreen(
                         )
                     )
 
-                    // --------------------------------------------------------
-                    // CATEGORY Dropdown
-                    // --------------------------------------------------------
-
+                    // Category Dropdown
                     var expanded by remember { mutableStateOf(false) }
 
                     ExposedDropdownMenuBox(
@@ -244,10 +247,7 @@ fun ExpenseEntryScreen(
                         }
                     }
 
-                    // --------------------------------------------------------
-                    // DESCRIPTION
-                    // --------------------------------------------------------
-
+                    // Description
                     OutlinedTextField(
                         value = description,
                         onValueChange = { description = it },
@@ -267,10 +267,7 @@ fun ExpenseEntryScreen(
                         )
                     )
 
-                    // --------------------------------------------------------
-                    // ADD EXPENSE BUTTON
-                    // --------------------------------------------------------
-
+                    // Add Expense Button
                     Button(
                         onClick = {
                             val cleanAmount = NumberUtils.toDouble(amount)
@@ -310,10 +307,7 @@ fun ExpenseEntryScreen(
                         )
                     }
 
-                    // --------------------------------------------------------
-                    // CLEAR BUTTON
-                    // --------------------------------------------------------
-
+                    // Clear Button
                     TextButton(
                         onClick = {
                             amount = ""
@@ -333,15 +327,15 @@ fun ExpenseEntryScreen(
                 }
             }
 
-            // ============================================================
-            // TODAY'S EXPENSES HISTORY
-            // ============================================================
+            // Today's Expenses History
+            Spacer(modifier = Modifier.height(24.dp))
             
             Divider(
-                color = colorScheme.onSurface.copy(alpha = 0.15f),
-                thickness = 0.5.dp,
-                modifier = Modifier.padding(vertical = 4.dp)
+                color = colorScheme.onSurface.copy(alpha = 0.2f),
+                thickness = 1.dp
             )
+            
+            Spacer(modifier = Modifier.height(16.dp))
             
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -350,10 +344,11 @@ fun ExpenseEntryScreen(
             ) {
                 Text(
                     text = "📋 Today's Expenses",
-                    fontSize = 15.sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = colorScheme.onSurface
                 )
+                
                 Text(
                     text = "${todayExpenses.size} entries",
                     fontSize = 12.sp,
@@ -361,44 +356,66 @@ fun ExpenseEntryScreen(
                 )
             }
             
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             
             if (todayExpenses.isEmpty()) {
                 Card(
-                    modifier = Modifier.fillMaxWidth().height(60.dp),
-                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(80.dp),
+                    shape = RoundedCornerShape(12.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = colorScheme.surfaceVariant.copy(alpha = 0.5f)
                     )
                 ) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text("No expenses today", fontSize = 14.sp, color = colorScheme.onSurfaceVariant)
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "No expenses today",
+                            fontSize = 14.sp,
+                            color = colorScheme.onSurfaceVariant
+                        )
                     }
                 }
             } else {
-                val displayExpenses = todayExpenses.sortedByDescending { it.date }.take(4)
+                val displayExpenses = todayExpenses
+                    .sortedByDescending { it.date }
+                    .take(4)
                 
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(colorScheme.primary.copy(alpha = 0.08f), RoundedCornerShape(topStart = 6.dp, topEnd = 6.dp))
-                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                        .background(
+                            color = colorScheme.primary.copy(alpha = 0.1f),
+                            shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
+                        )
+                        .padding(horizontal = 12.dp, vertical = 10.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("#", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = colorScheme.primary, modifier = Modifier.width(24.dp))
+                    Text("#", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = colorScheme.primary, modifier = Modifier.width(30.dp))
                     Text("Amount", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = colorScheme.primary, modifier = Modifier.weight(1f))
                     Text("Type", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = colorScheme.primary, modifier = Modifier.weight(0.6f))
                     Text("Category", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = colorScheme.primary, modifier = Modifier.weight(1f))
                 }
                 
                 displayExpenses.forEachIndexed { index, expense ->
-                    val rowColor = if (index % 2 == 0) colorScheme.surface else colorScheme.surfaceVariant.copy(alpha = 0.2f)
+                    val rowColor = if (index % 2 == 0) {
+                        colorScheme.surface
+                    } else {
+                        colorScheme.surfaceVariant.copy(alpha = 0.3f)
+                    }
+                    
                     Row(
-                        modifier = Modifier.fillMaxWidth().background(rowColor).padding(horizontal = 12.dp, vertical = 8.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(rowColor)
+                            .padding(horizontal = 12.dp, vertical = 8.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("${displayExpenses.size - index}", fontSize = 13.sp, color = colorScheme.onSurface, modifier = Modifier.width(24.dp))
+                        Text("${displayExpenses.size - index}", fontSize = 13.sp, color = colorScheme.onSurface, modifier = Modifier.width(30.dp))
                         Text("${expense.amount}", fontSize = 14.sp, fontWeight = FontWeight.Medium, color = colorScheme.onSurface, modifier = Modifier.weight(1f))
                         Text(
                             when (expense.type) {
@@ -419,18 +436,24 @@ fun ExpenseEntryScreen(
                 }
             }
             
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(100.dp))
         }
 
         // ============================================================
-        // FLOATING ACTION BUTTON
+        // FLOATING HISTORY BUTTON (moved up 200dp)
         // ============================================================
         
         FloatingActionButton(
             onClick = onHistoryClick,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .offset { IntOffset(x = fabOffsetX.roundToInt(), y = fabOffsetY.roundToInt()) }
+                .offset { 
+                    IntOffset(
+                        x = fabOffsetX.roundToInt(),
+                        y = fabOffsetY.roundToInt() - 200.dp.value.roundToInt()
+                    )
+                }
+                .padding(16.dp)
                 .size(52.dp)
                 .pointerInput(Unit) {
                     detectDragGestures(
@@ -460,10 +483,14 @@ fun ExpenseEntryScreen(
                 },
             containerColor = colorScheme.primary.copy(alpha = 0.85f),
             contentColor = colorScheme.onPrimary,
-            shape = RoundedCornerShape(14.dp),
-            elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 4.dp)
+            shape = RoundedCornerShape(16.dp),
+            elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 6.dp)
         ) {
-            Icon(Icons.Default.History, contentDescription = "View All Expense History", modifier = Modifier.size(24.dp))
+            Icon(
+                imageVector = Icons.Default.History,
+                contentDescription = "View All Expense History",
+                modifier = Modifier.size(24.dp)
+            )
         }
     }
 }

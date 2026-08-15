@@ -77,10 +77,19 @@ fun SaleEntryScreen(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp)
-                .padding(bottom = 60.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .padding(bottom = 100.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Title
+            Text(
+                text = "💰 Add Sale",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = colorScheme.onSurface,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+            )
 
             // ============================================================
             // FORM CARD
@@ -102,9 +111,8 @@ fun SaleEntryScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-
                     // Amount Field
                     OutlinedTextField(
                         value = amount,
@@ -116,7 +124,7 @@ fun SaleEntryScreen(
                             amountError = false
                         },
                         label = {
-                            Text(text = stringResource(R.string.amount), fontSize = 12.sp)
+                            Text(text = stringResource(R.string.amount))
                         },
                         modifier = Modifier.fillMaxWidth(),
                         keyboardOptions = KeyboardOptions(
@@ -127,13 +135,12 @@ fun SaleEntryScreen(
                             if (amountError) {
                                 Text(
                                     text = stringResource(R.string.enter_valid_amount),
-                                    fontSize = 11.sp,
+                                    fontSize = 12.sp,
                                     color = MaterialTheme.colorScheme.error
                                 )
                             }
                         },
                         singleLine = true,
-                        textStyle = MaterialTheme.typography.bodyMedium.copy(fontSize = 16.sp),
                         enabled = !isLoading,
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = colorScheme.primary,
@@ -141,7 +148,7 @@ fun SaleEntryScreen(
                         )
                     )
 
-                    // Payment Type - Label + Radio buttons
+                    // Payment Type
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
@@ -149,13 +156,12 @@ fun SaleEntryScreen(
                     ) {
                         Text(
                             text = stringResource(R.string.payment_type_short),
-                            fontSize = 12.sp,
+                            fontSize = 14.sp,
                             color = colorScheme.onSurface.copy(alpha = 0.7f),
-                            modifier = Modifier.width(80.dp),
+                            modifier = Modifier.width(90.dp),
                             maxLines = 1
                         )
 
-                        // Cash
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
@@ -175,12 +181,12 @@ fun SaleEntryScreen(
                                     unselectedColor = colorScheme.onSurfaceVariant
                                 ),
                                 enabled = !isLoading,
-                                modifier = Modifier.size(28.dp)
+                                modifier = Modifier.size(35.dp)
                             )
-                            Spacer(modifier = Modifier.width(4.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = stringResource(R.string.cash),
-                                fontSize = 13.sp,
+                                fontSize = 14.sp,
                                 color = if (selectedPaymentType == PaymentType.CASH) 
                                     colorScheme.primary 
                                 else 
@@ -189,7 +195,6 @@ fun SaleEntryScreen(
                             )
                         }
 
-                        // KPay
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
@@ -209,12 +214,12 @@ fun SaleEntryScreen(
                                     unselectedColor = colorScheme.onSurfaceVariant
                                 ),
                                 enabled = !isLoading,
-                                modifier = Modifier.size(28.dp)
+                                modifier = Modifier.size(35.dp)
                             )
-                            Spacer(modifier = Modifier.width(4.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = stringResource(R.string.kpay),
-                                fontSize = 13.sp,
+                                fontSize = 14.sp,
                                 color = if (selectedPaymentType == PaymentType.KPAY) 
                                     colorScheme.primary 
                                 else 
@@ -223,7 +228,6 @@ fun SaleEntryScreen(
                             )
                         }
 
-                        // WavePay
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
@@ -243,12 +247,12 @@ fun SaleEntryScreen(
                                     unselectedColor = colorScheme.onSurfaceVariant
                                 ),
                                 enabled = !isLoading,
-                                modifier = Modifier.size(28.dp)
+                                modifier = Modifier.size(35.dp)
                             )
-                            Spacer(modifier = Modifier.width(4.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = stringResource(R.string.wavepay),
-                                fontSize = 13.sp,
+                                fontSize = 14.sp,
                                 color = if (selectedPaymentType == PaymentType.WAVEPAY) 
                                     colorScheme.primary 
                                 else 
@@ -331,7 +335,7 @@ fun SaleEntryScreen(
                     if (!isFormValid && amount.isNotEmpty()) {
                         Text(
                             text = "Please enter a valid amount",
-                            fontSize = 11.sp,
+                            fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.error,
                             modifier = Modifier.fillMaxWidth()
                         )
@@ -357,15 +361,15 @@ fun SaleEntryScreen(
                 }
             }
 
-            // ============================================================
-            // TODAY'S SALES HISTORY
-            // ============================================================
+            // Today's Sales History
+            Spacer(modifier = Modifier.height(24.dp))
             
             Divider(
-                color = colorScheme.onSurface.copy(alpha = 0.15f),
-                thickness = 0.5.dp,
-                modifier = Modifier.padding(vertical = 4.dp)
+                color = colorScheme.onSurface.copy(alpha = 0.2f),
+                thickness = 1.dp
             )
+            
+            Spacer(modifier = Modifier.height(16.dp))
             
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -374,10 +378,11 @@ fun SaleEntryScreen(
             ) {
                 Text(
                     text = "📋 Today's Sales",
-                    fontSize = 15.sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = colorScheme.onSurface
                 )
+                
                 Text(
                     text = "${todaySales.size} entries",
                     fontSize = 12.sp,
@@ -385,46 +390,68 @@ fun SaleEntryScreen(
                 )
             }
             
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             
             if (todaySales.isEmpty()) {
                 Card(
-                    modifier = Modifier.fillMaxWidth().height(60.dp),
-                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(80.dp),
+                    shape = RoundedCornerShape(12.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = colorScheme.surfaceVariant.copy(alpha = 0.5f)
                     )
                 ) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text("No sales today", fontSize = 14.sp, color = colorScheme.onSurfaceVariant)
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "No sales today",
+                            fontSize = 14.sp,
+                            color = colorScheme.onSurfaceVariant
+                        )
                     }
                 }
             } else {
-                val displaySales = todaySales.sortedByDescending { it.date }.take(4)
+                val displaySales = todaySales
+                    .sortedByDescending { it.date }
+                    .take(4)
                 
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(colorScheme.primary.copy(alpha = 0.08f), RoundedCornerShape(topStart = 6.dp, topEnd = 6.dp))
-                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                        .background(
+                            color = colorScheme.primary.copy(alpha = 0.1f),
+                            shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
+                        )
+                        .padding(horizontal = 12.dp, vertical = 10.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("#", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = colorScheme.primary, modifier = Modifier.width(24.dp))
+                    Text("#", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = colorScheme.primary, modifier = Modifier.width(30.dp))
                     Text("Amount", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = colorScheme.primary, modifier = Modifier.weight(1f))
                     Text("Payment", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = colorScheme.primary, modifier = Modifier.weight(1f))
-                    Text("Time", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = colorScheme.primary, modifier = Modifier.weight(1f))
+                    Text("Time", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = colorScheme.primary, modifier = Modifier.weight(1.2f))
                 }
                 
                 val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
                 
                 displaySales.forEachIndexed { index, sale ->
-                    val rowColor = if (index % 2 == 0) colorScheme.surface else colorScheme.surfaceVariant.copy(alpha = 0.2f)
+                    val rowColor = if (index % 2 == 0) {
+                        colorScheme.surface
+                    } else {
+                        colorScheme.surfaceVariant.copy(alpha = 0.3f)
+                    }
+                    
                     Row(
-                        modifier = Modifier.fillMaxWidth().background(rowColor).padding(horizontal = 12.dp, vertical = 8.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(rowColor)
+                            .padding(horizontal = 12.dp, vertical = 8.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("${displaySales.size - index}", fontSize = 13.sp, color = colorScheme.onSurface, modifier = Modifier.width(24.dp))
+                        Text("${displaySales.size - index}", fontSize = 13.sp, color = colorScheme.onSurface, modifier = Modifier.width(30.dp))
                         Text("${sale.amount}", fontSize = 14.sp, fontWeight = FontWeight.Medium, color = colorScheme.onSurface, modifier = Modifier.weight(1f))
                         Text(
                             when (sale.paymentType) {
@@ -438,26 +465,32 @@ fun SaleEntryScreen(
                         )
                         Text(
                             dateFormat.format(Date(sale.date)),
-                            fontSize = 12.sp,
+                            fontSize = 11.sp,
                             color = colorScheme.onSurfaceVariant,
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1.2f)
                         )
                     }
                 }
             }
             
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(100.dp))
         }
 
         // ============================================================
-        // FLOATING ACTION BUTTON
+        // FLOATING HISTORY BUTTON (moved up 200dp)
         // ============================================================
         
         FloatingActionButton(
             onClick = onHistoryClick,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .offset { IntOffset(x = fabOffsetX.roundToInt(), y = fabOffsetY.roundToInt()) }
+                .offset { 
+                    IntOffset(
+                        x = fabOffsetX.roundToInt(),
+                        y = fabOffsetY.roundToInt() - 200.dp.value.roundToInt()
+                    )
+                }
+                .padding(16.dp)
                 .size(52.dp)
                 .pointerInput(Unit) {
                     detectDragGestures(
@@ -487,10 +520,14 @@ fun SaleEntryScreen(
                 },
             containerColor = colorScheme.primary.copy(alpha = 0.85f),
             contentColor = colorScheme.onPrimary,
-            shape = RoundedCornerShape(14.dp),
-            elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 4.dp)
+            shape = RoundedCornerShape(16.dp),
+            elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 6.dp)
         ) {
-            Icon(Icons.Default.History, contentDescription = "View All Sales History", modifier = Modifier.size(24.dp))
+            Icon(
+                imageVector = Icons.Default.History,
+                contentDescription = "View All Sales History",
+                modifier = Modifier.size(24.dp)
+            )
         }
     }
 }

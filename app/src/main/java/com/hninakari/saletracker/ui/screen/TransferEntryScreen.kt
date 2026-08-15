@@ -8,8 +8,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ExpandLess
-import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -48,7 +46,6 @@ fun TransferEntryScreen(
     
     val allTransfers by viewModel.filteredTransfers.collectAsState(initial = emptyList())
     
-    // Filter only today's transfers
     val todayTransfers = remember(allTransfers) {
         val todayStart = DateUtils.getFilterStartTime(DateUtils.DateFilter.TODAY)
         allTransfers.filter { 
@@ -61,7 +58,6 @@ fun TransferEntryScreen(
     var selectedService by remember { mutableStateOf(TransferService.KPAY) }
     var selectedDirection by remember { mutableStateOf(TransferDirection.OUT) }
     var notes by remember { mutableStateOf("") }
-    var showNotes by remember { mutableStateOf(false) }
 
     var amountError by remember { mutableStateOf(false) }
     var feeError by remember { mutableStateOf(false) }
@@ -72,16 +68,8 @@ fun TransferEntryScreen(
     val focusManager = LocalFocusManager.current
     val scope = rememberCoroutineScope()
 
-    // FAB position state
     var fabOffsetX by remember { mutableStateOf(0f) }
     var fabOffsetY by remember { mutableStateOf(0f) }
-
-    // Check if form is valid
-    val isFormValid = remember(amount, fee) {
-        val cleanAmount = amount.toDoubleOrNull()
-        val cleanFee = fee.toDoubleOrNull()
-        cleanAmount != null && cleanAmount > 0.0 && cleanFee != null && cleanFee >= 0.0
-    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -89,10 +77,19 @@ fun TransferEntryScreen(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp)
-                .padding(bottom = 60.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .padding(bottom = 100.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Title
+            Text(
+                text = "🔄 Add Transfer",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = colorScheme.onSurface,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+            )
 
             // ============================================================
             // FORM CARD
@@ -114,18 +111,13 @@ fun TransferEntryScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-
-                    // --------------------------------------------------------
-                    // DIRECTION AND SERVICE
-                    // --------------------------------------------------------
-
+                    // Direction and Service
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-
                         ExposedDropdownMenuBox(
                             expanded = directionExpanded,
                             onExpandedChange = { directionExpanded = !directionExpanded },
@@ -211,15 +203,11 @@ fun TransferEntryScreen(
                         }
                     }
 
-                    // --------------------------------------------------------
-                    // AMOUNT AND FEE IN ONE ROW (BOTH REQUIRED)
-                    // --------------------------------------------------------
-
+                    // Amount and Fee in one row
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        // Amount (Required)
                         OutlinedTextField(
                             value = amount,
                             onValueChange = {
@@ -228,18 +216,13 @@ fun TransferEntryScreen(
                                 amount = filtered
                                 amountError = false
                             },
-                            label = { 
-                                Text(
-                                    stringResource(R.string.amount) + " *", 
-                                    fontSize = 12.sp
-                                )
-                            },
+                            label = { Text(stringResource(R.string.amount), fontSize = 12.sp) },
                             modifier = Modifier.weight(1f),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                             isError = amountError,
                             supportingText = {
                                 if (amountError) {
-                                    Text("Required", fontSize = 11.sp, color = colorScheme.error)
+                                    Text("Invalid", fontSize = 11.sp, color = colorScheme.error)
                                 }
                             },
                             singleLine = true,
@@ -250,7 +233,6 @@ fun TransferEntryScreen(
                             )
                         )
 
-                        // Fee (Required)
                         OutlinedTextField(
                             value = fee,
                             onValueChange = {
@@ -259,18 +241,13 @@ fun TransferEntryScreen(
                                 fee = filtered
                                 feeError = false
                             },
-                            label = { 
-                                Text(
-                                    stringResource(R.string.fee) + " *", 
-                                    fontSize = 12.sp
-                                )
-                            },
+                            label = { Text(stringResource(R.string.fee), fontSize = 12.sp) },
                             modifier = Modifier.weight(1f),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                             isError = feeError,
                             supportingText = {
                                 if (feeError) {
-                                    Text("Required", fontSize = 11.sp, color = colorScheme.error)
+                                    Text("Invalid", fontSize = 11.sp, color = colorScheme.error)
                                 }
                             },
                             singleLine = true,
@@ -282,73 +259,33 @@ fun TransferEntryScreen(
                         )
                     }
 
-                    // --------------------------------------------------------
-                    // NOTES TOGGLE BUTTON
-                    // --------------------------------------------------------
-
-                    OutlinedButton(
-                        onClick = { showNotes = !showNotes },
+                    // Notes
+                    OutlinedTextField(
+                        value = notes,
+                        onValueChange = { notes = it },
+                        label = { Text(stringResource(R.string.notes_optional), fontSize = 12.sp) },
                         modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = colorScheme.primary
+                        minLines = 2,
+                        maxLines = 3,
+                        textStyle = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = colorScheme.primary,
+                            unfocusedBorderColor = colorScheme.onSurface.copy(alpha = 0.3f)
                         )
-                    ) {
-                        Icon(
-                            if (showNotes) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                            contentDescription = if (showNotes) "Hide notes" else "Add notes",
-                            modifier = Modifier.size(20.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            if (showNotes) "Hide Notes" else "Add Notes (optional)",
-                            fontSize = 14.sp
-                        )
-                        if (notes.isNotEmpty()) {
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Badge(
-                                containerColor = colorScheme.primary,
-                                contentColor = colorScheme.onPrimary
-                            ) {
-                                Text("✓", fontSize = 12.sp)
-                            }
-                        }
-                    }
+                    )
 
-                    // --------------------------------------------------------
-                    // NOTES FIELD (only shown when expanded)
-                    // --------------------------------------------------------
-
-                    if (showNotes) {
-                        OutlinedTextField(
-                            value = notes,
-                            onValueChange = { notes = it },
-                            label = { Text("Notes", fontSize = 12.sp) },
-                            modifier = Modifier.fillMaxWidth(),
-                            minLines = 2,
-                            maxLines = 3,
-                            textStyle = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp),
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = colorScheme.primary,
-                                unfocusedBorderColor = colorScheme.onSurface.copy(alpha = 0.3f)
-                            )
-                        )
-                    }
-
-                    // --------------------------------------------------------
-                    // ADD TRANSFER BUTTON
-                    // --------------------------------------------------------
-
+                    // Add Transfer Button
                     Button(
                         onClick = {
                             val cleanAmount = NumberUtils.toDouble(amount)
-                            val cleanFee = NumberUtils.toDouble(fee)
+                            val cleanFee = NumberUtils.toDouble(fee) ?: 0.0
                             var valid = true
 
                             if (cleanAmount == null || cleanAmount <= 0.0) {
                                 amountError = true
                                 valid = false
                             }
-                            if (cleanFee == null || cleanFee < 0.0) {
+                            if (cleanFee < 0.0) {
                                 feeError = true
                                 valid = false
                             }
@@ -358,7 +295,7 @@ fun TransferEntryScreen(
                                     service = selectedService,
                                     direction = selectedDirection,
                                     amount = cleanAmount!!,
-                                    fee = cleanFee!!,
+                                    fee = cleanFee,
                                     customerName = "",
                                     customerPhone = "",
                                     notes = notes.trim()
@@ -367,7 +304,6 @@ fun TransferEntryScreen(
                                 amount = ""
                                 fee = ""
                                 notes = ""
-                                showNotes = false
                                 selectedService = TransferService.KPAY
                                 selectedDirection = TransferDirection.OUT
                                 amountError = false
@@ -376,10 +312,9 @@ fun TransferEntryScreen(
                             }
                         },
                         modifier = Modifier.fillMaxWidth().height(50.dp),
-                        enabled = isFormValid,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (isFormValid) colorScheme.primary else colorScheme.onSurface.copy(alpha = 0.3f),
-                            contentColor = if (isFormValid) colorScheme.onPrimary else colorScheme.onSurface.copy(alpha = 0.5f)
+                            containerColor = colorScheme.primary,
+                            contentColor = colorScheme.onPrimary
                         )
                     ) {
                         Text(
@@ -388,16 +323,12 @@ fun TransferEntryScreen(
                         )
                     }
 
-                    // --------------------------------------------------------
-                    // CLEAR BUTTON
-                    // --------------------------------------------------------
-
+                    // Clear Button
                     TextButton(
                         onClick = {
                             amount = ""
                             fee = ""
                             notes = ""
-                            showNotes = false
                             selectedService = TransferService.KPAY
                             selectedDirection = TransferDirection.OUT
                             amountError = false
@@ -411,15 +342,15 @@ fun TransferEntryScreen(
                 }
             }
 
-            // ============================================================
-            // TODAY'S TRANSFERS HISTORY
-            // ============================================================
+            // Today's Transfers History
+            Spacer(modifier = Modifier.height(24.dp))
             
             Divider(
-                color = colorScheme.onSurface.copy(alpha = 0.15f),
-                thickness = 0.5.dp,
-                modifier = Modifier.padding(vertical = 4.dp)
+                color = colorScheme.onSurface.copy(alpha = 0.2f),
+                thickness = 1.dp
             )
+            
+            Spacer(modifier = Modifier.height(16.dp))
             
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -428,10 +359,11 @@ fun TransferEntryScreen(
             ) {
                 Text(
                     text = "📋 Today's Transfers",
-                    fontSize = 15.sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = colorScheme.onSurface
                 )
+                
                 Text(
                     text = "${todayTransfers.size} entries",
                     fontSize = 12.sp,
@@ -439,44 +371,66 @@ fun TransferEntryScreen(
                 )
             }
             
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             
             if (todayTransfers.isEmpty()) {
                 Card(
-                    modifier = Modifier.fillMaxWidth().height(60.dp),
-                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(80.dp),
+                    shape = RoundedCornerShape(12.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = colorScheme.surfaceVariant.copy(alpha = 0.5f)
                     )
                 ) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text("No transfers today", fontSize = 14.sp, color = colorScheme.onSurfaceVariant)
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "No transfers today",
+                            fontSize = 14.sp,
+                            color = colorScheme.onSurfaceVariant
+                        )
                     }
                 }
             } else {
-                val displayTransfers = todayTransfers.sortedByDescending { it.date }.take(4)
+                val displayTransfers = todayTransfers
+                    .sortedByDescending { it.date }
+                    .take(4)
                 
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(colorScheme.primary.copy(alpha = 0.08f), RoundedCornerShape(topStart = 6.dp, topEnd = 6.dp))
-                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                        .background(
+                            color = colorScheme.primary.copy(alpha = 0.1f),
+                            shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
+                        )
+                        .padding(horizontal = 12.dp, vertical = 10.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("#", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = colorScheme.primary, modifier = Modifier.width(24.dp))
+                    Text("#", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = colorScheme.primary, modifier = Modifier.width(30.dp))
                     Text("Amount", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = colorScheme.primary, modifier = Modifier.weight(1f))
                     Text("Dir", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = colorScheme.primary, modifier = Modifier.weight(0.5f))
                     Text("Service", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = colorScheme.primary, modifier = Modifier.weight(0.7f))
                 }
                 
                 displayTransfers.forEachIndexed { index, transfer ->
-                    val rowColor = if (index % 2 == 0) colorScheme.surface else colorScheme.surfaceVariant.copy(alpha = 0.2f)
+                    val rowColor = if (index % 2 == 0) {
+                        colorScheme.surface
+                    } else {
+                        colorScheme.surfaceVariant.copy(alpha = 0.3f)
+                    }
+                    
                     Row(
-                        modifier = Modifier.fillMaxWidth().background(rowColor).padding(horizontal = 12.dp, vertical = 8.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(rowColor)
+                            .padding(horizontal = 12.dp, vertical = 8.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("${displayTransfers.size - index}", fontSize = 13.sp, color = colorScheme.onSurface, modifier = Modifier.width(24.dp))
+                        Text("${displayTransfers.size - index}", fontSize = 13.sp, color = colorScheme.onSurface, modifier = Modifier.width(30.dp))
                         Text("${transfer.amount}", fontSize = 14.sp, fontWeight = FontWeight.Medium, color = colorScheme.onSurface, modifier = Modifier.weight(1f))
                         Text(if (transfer.direction == TransferDirection.IN) "📥" else "📤", fontSize = 15.sp, modifier = Modifier.weight(0.5f))
                         Text(if (transfer.service == TransferService.KPAY) "KPay" else "Wave", fontSize = 12.sp, color = colorScheme.onSurfaceVariant, modifier = Modifier.weight(0.7f))
@@ -484,18 +438,24 @@ fun TransferEntryScreen(
                 }
             }
             
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(100.dp))
         }
 
         // ============================================================
-        // FLOATING ACTION BUTTON
+        // FLOATING HISTORY BUTTON (moved up 200dp)
         // ============================================================
         
         FloatingActionButton(
             onClick = onHistoryClick,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .offset { IntOffset(x = fabOffsetX.roundToInt(), y = fabOffsetY.roundToInt()) }
+                .offset { 
+                    IntOffset(
+                        x = fabOffsetX.roundToInt(),
+                        y = fabOffsetY.roundToInt() - 200.dp.value.roundToInt()
+                    )
+                }
+                .padding(16.dp)
                 .size(52.dp)
                 .pointerInput(Unit) {
                     detectDragGestures(
@@ -525,10 +485,14 @@ fun TransferEntryScreen(
                 },
             containerColor = colorScheme.primary.copy(alpha = 0.85f),
             contentColor = colorScheme.onPrimary,
-            shape = RoundedCornerShape(14.dp),
-            elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 4.dp)
+            shape = RoundedCornerShape(16.dp),
+            elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 6.dp)
         ) {
-            Icon(Icons.Default.History, contentDescription = "View All Transfer History", modifier = Modifier.size(24.dp))
+            Icon(
+                imageVector = Icons.Default.History,
+                contentDescription = "View All Transfer History",
+                modifier = Modifier.size(24.dp)
+            )
         }
     }
 }
