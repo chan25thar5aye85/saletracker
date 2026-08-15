@@ -14,8 +14,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hninakari.saletracker.R
-import com.hninakari.saletracker.core.ui.theme.Primary
-import com.hninakari.saletracker.core.ui.theme.TextPrimary
 import com.hninakari.saletracker.data.model.Expense
 import com.hninakari.saletracker.data.model.ExpenseCategory
 import com.hninakari.saletracker.data.model.ExpenseType
@@ -31,7 +29,9 @@ fun ExpenseEntryScreen(
     var selectedType by remember { mutableStateOf(ExpenseType.BUSINESS) }
     var description by remember { mutableStateOf("") }
     var amountError by remember { mutableStateOf(false) }
+
     val focusManager = LocalFocusManager.current
+    val colorScheme = MaterialTheme.colorScheme
 
     Column(
         modifier = Modifier
@@ -41,77 +41,117 @@ fun ExpenseEntryScreen(
             .padding(bottom = 100.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+        // --------------------------------------------------------
+        // EXPENSE TYPE
+        // --------------------------------------------------------
+
         Text(
             text = stringResource(R.string.expense_type),
             fontSize = 14.sp,
-            color = TextPrimary.copy(alpha = 0.6f),
+            color = colorScheme.onSurfaceVariant,
             modifier = Modifier.fillMaxWidth()
         )
-        
+
         Spacer(modifier = Modifier.height(6.dp))
-        
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+
             FilterChip(
                 selected = selectedType == ExpenseType.BUSINESS,
-                onClick = { selectedType = ExpenseType.BUSINESS },
-                label = { Text("🏢 ${stringResource(R.string.business)}") },
+                onClick = {
+                    selectedType = ExpenseType.BUSINESS
+                },
+                label = {
+                    Text(
+                        "🏢 ${stringResource(R.string.business)}"
+                    )
+                },
                 modifier = Modifier.weight(1f),
                 colors = FilterChipDefaults.filterChipColors(
-                    selectedContainerColor = Primary.copy(alpha = 0.2f),
-                    selectedLabelColor = Primary
+                    selectedContainerColor = colorScheme.primary.copy(alpha = 0.2f),
+                    selectedLabelColor = colorScheme.primary
                 )
             )
+
             FilterChip(
                 selected = selectedType == ExpenseType.PERSONAL,
-                onClick = { selectedType = ExpenseType.PERSONAL },
-                label = { Text("👤 ${stringResource(R.string.personal)}") },
+                onClick = {
+                    selectedType = ExpenseType.PERSONAL
+                },
+                label = {
+                    Text(
+                        "👤 ${stringResource(R.string.personal)}"
+                    )
+                },
                 modifier = Modifier.weight(1f),
                 colors = FilterChipDefaults.filterChipColors(
-                    selectedContainerColor = MaterialTheme.colorScheme.error.copy(alpha = 0.2f),
-                    selectedLabelColor = MaterialTheme.colorScheme.error
+                    selectedContainerColor = colorScheme.error.copy(alpha = 0.2f),
+                    selectedLabelColor = colorScheme.error
                 )
             )
         }
-        
+
         Spacer(modifier = Modifier.height(10.dp))
-        
+
+        // --------------------------------------------------------
+        // AMOUNT
+        // --------------------------------------------------------
+
         OutlinedTextField(
             value = amount,
-            onValueChange = { 
+            onValueChange = {
                 val englishDigits = NumberUtils.toEnglishDigits(it)
-                val filtered = englishDigits.filter { char -> char.isDigit() || char == '.' }
+
+                val filtered = englishDigits.filter { char ->
+                    char.isDigit() || char == '.'
+                }
+
                 amount = filtered
                 amountError = false
             },
-            label = { Text(stringResource(R.string.amount)) },
+            label = {
+                Text(stringResource(R.string.amount))
+            },
             modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Decimal
+            ),
             isError = amountError,
             supportingText = {
                 if (amountError) {
-                    Text("Enter valid amount")
+                    Text(
+                        text = "Enter valid amount",
+                        color = colorScheme.error
+                    )
                 }
             },
             singleLine = true
         )
-        
+
         Spacer(modifier = Modifier.height(10.dp))
-        
+
+        // --------------------------------------------------------
+        // CATEGORY
+        // --------------------------------------------------------
+
         Text(
             text = stringResource(R.string.category),
             fontSize = 14.sp,
-            color = TextPrimary.copy(alpha = 0.6f),
+            color = colorScheme.onSurfaceVariant,
             modifier = Modifier.fillMaxWidth()
         )
-        
+
         Spacer(modifier = Modifier.height(6.dp))
-        
+
         var expanded by remember { mutableStateOf(false) }
-        
-        fun getCategoryDisplayName(category: ExpenseCategory): String {
+
+        fun getCategoryDisplayName(
+            category: ExpenseCategory
+        ): String {
             return when (category) {
                 ExpenseCategory.INVENTORY -> "ကုန်ပစ္စည်း"
                 ExpenseCategory.RENT -> "ငှားရမ်းခ"
@@ -123,30 +163,47 @@ fun ExpenseEntryScreen(
                 ExpenseCategory.OTHER -> "အခြား"
             }
         }
-        
+
         ExposedDropdownMenuBox(
             expanded = expanded,
-            onExpandedChange = { expanded = !expanded }
+            onExpandedChange = {
+                expanded = !expanded
+            }
         ) {
+
             OutlinedTextField(
                 value = getCategoryDisplayName(selectedCategory),
                 onValueChange = {},
                 readOnly = true,
-                label = { Text(stringResource(R.string.category)) },
+                label = {
+                    Text(stringResource(R.string.category))
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .menuAnchor(),
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(
+                        expanded = expanded
+                    )
+                },
                 singleLine = true
             )
-            
+
             ExposedDropdownMenu(
                 expanded = expanded,
-                onDismissRequest = { expanded = false }
+                onDismissRequest = {
+                    expanded = false
+                }
             ) {
+
                 ExpenseCategory.values().forEach { category ->
+
                     DropdownMenuItem(
-                        text = { Text(getCategoryDisplayName(category)) },
+                        text = {
+                            Text(
+                                getCategoryDisplayName(category)
+                            )
+                        },
                         onClick = {
                             selectedCategory = category
                             expanded = false
@@ -156,50 +213,88 @@ fun ExpenseEntryScreen(
                 }
             }
         }
-        
+
         Spacer(modifier = Modifier.height(10.dp))
-        
+
+        // --------------------------------------------------------
+        // DESCRIPTION
+        // --------------------------------------------------------
+
         OutlinedTextField(
             value = description,
-            onValueChange = { description = it },
-            label = { Text(stringResource(R.string.description_optional)) },
+            onValueChange = {
+                description = it
+            },
+            label = {
+                Text(
+                    stringResource(
+                        R.string.description_optional
+                    )
+                )
+            },
             modifier = Modifier.fillMaxWidth(),
             minLines = 2,
             maxLines = 4,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text
+            )
         )
-        
+
         Spacer(modifier = Modifier.height(16.dp))
-        
+
+        // --------------------------------------------------------
+        // ADD EXPENSE
+        // --------------------------------------------------------
+
         Button(
             onClick = {
+
                 val cleanAmount = NumberUtils.toDouble(amount)
+
                 if (cleanAmount == null || cleanAmount <= 0.0) {
+
                     amountError = true
+
                 } else {
+
                     val expense = Expense(
                         amount = cleanAmount,
                         category = selectedCategory,
                         type = selectedType,
                         description = description.trim()
                     )
+
                     onExpenseAdded(expense)
+
                     amount = ""
                     description = ""
                     selectedCategory = ExpenseCategory.OTHER
                     selectedType = ExpenseType.BUSINESS
                     amountError = false
+
                     focusManager.clearFocus()
                 }
             },
-            modifier = Modifier.fillMaxWidth().height(50.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Primary)
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colorScheme.primary,
+                contentColor = colorScheme.onPrimary
+            )
         ) {
-            Text(stringResource(R.string.add_expense_button), fontSize = 16.sp)
+            Text(
+                text = stringResource(R.string.add_expense_button),
+                fontSize = 16.sp
+            )
         }
-        
+
         Spacer(modifier = Modifier.height(6.dp))
-        
+
+        // --------------------------------------------------------
+        // CLEAR
+        // --------------------------------------------------------
+
         TextButton(
             onClick = {
                 amount = ""
@@ -207,13 +302,17 @@ fun ExpenseEntryScreen(
                 selectedCategory = ExpenseCategory.OTHER
                 selectedType = ExpenseType.BUSINESS
                 amountError = false
+
                 focusManager.clearFocus()
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(stringResource(R.string.clear), fontSize = 14.sp)
+            Text(
+                text = stringResource(R.string.clear),
+                fontSize = 14.sp
+            )
         }
-        
+
         Spacer(modifier = Modifier.height(100.dp))
     }
 }

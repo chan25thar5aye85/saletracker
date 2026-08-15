@@ -14,56 +14,129 @@ fun AppBottomBar(
     selectedTab: Int,
     onTabSelected: (Int) -> Unit
 ) {
-    NavigationBar(
-        containerColor = MaterialTheme.colorScheme.surfaceContainer,
-        tonalElevation = 0.dp
+    val backgroundColor = MaterialTheme.colorScheme.background
+    val contentColor = MaterialTheme.colorScheme.onBackground
+
+    val itemColors = NavigationBarItemDefaults.colors(
+        selectedIconColor = contentColor,
+        selectedTextColor = contentColor,
+        indicatorColor = backgroundColor,
+        unselectedIconColor = contentColor.copy(alpha = 0.65f),
+        unselectedTextColor = contentColor.copy(alpha = 0.65f)
+    )
+
+    Surface(
+        color = backgroundColor,
+        contentColor = contentColor,
+        tonalElevation = 0.dp,
+        shadowElevation = 0.dp
     ) {
-        val itemColors = NavigationBarItemDefaults.colors(
-            selectedIconColor = MaterialTheme.colorScheme.secondary,
-            selectedTextColor = MaterialTheme.colorScheme.secondary,
-            indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.18f),
-            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.65f),
-            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.65f)
-        )
 
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.Add, null) },
-            label = { Text(stringResource(R.string.add_sale), fontSize = 11.sp) },
-            selected = selectedTab == 0,
-            onClick = { onTabSelected(0) },
-            colors = itemColors
-        )
+        NavigationBar(
+            containerColor = backgroundColor,
+            contentColor = contentColor,
+            tonalElevation = 0.dp
+        ) {
 
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.Remove, null) },
-            label = { Text(stringResource(R.string.add_expense), fontSize = 11.sp) },
-            selected = selectedTab == 1,
-            onClick = { onTabSelected(1) },
-            colors = itemColors
-        )
+            NavigationBarItem(
+                icon = {
+                    Icon(
+                        Icons.Default.Add,
+                        contentDescription = null
+                    )
+                },
+                label = {
+                    Text(
+                        stringResource(R.string.add_sale),
+                        fontSize = 11.sp
+                    )
+                },
+                selected = selectedTab == 0,
+                onClick = {
+                    onTabSelected(0)
+                },
+                colors = itemColors
+            )
 
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.SwapHoriz, null) },
-            label = { Text(stringResource(R.string.add_transfer), fontSize = 11.sp) },
-            selected = selectedTab == 2,
-            onClick = { onTabSelected(2) },
-            colors = itemColors
-        )
+            NavigationBarItem(
+                icon = {
+                    Icon(
+                        Icons.Default.Remove,
+                        contentDescription = null
+                    )
+                },
+                label = {
+                    Text(
+                        stringResource(R.string.add_expense),
+                        fontSize = 11.sp
+                    )
+                },
+                selected = selectedTab == 1,
+                onClick = {
+                    onTabSelected(1)
+                },
+                colors = itemColors
+            )
 
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.People, null) },
-            label = { Text(stringResource(R.string.people), fontSize = 11.sp) },
-            selected = selectedTab == 3,
-            onClick = { onTabSelected(3) },
-            colors = itemColors
-        )
+            NavigationBarItem(
+                icon = {
+                    Icon(
+                        Icons.Default.SwapHoriz,
+                        contentDescription = null
+                    )
+                },
+                label = {
+                    Text(
+                        stringResource(R.string.add_transfer),
+                        fontSize = 11.sp
+                    )
+                },
+                selected = selectedTab == 2,
+                onClick = {
+                    onTabSelected(2)
+                },
+                colors = itemColors
+            )
 
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.ShoppingCart, null) },
-            label = { Text("To Buy", fontSize = 11.sp) },
-            selected = selectedTab == 4,
-            onClick = { onTabSelected(4) },
-            colors = itemColors
-        )
+            NavigationBarItem(
+                icon = {
+                    Icon(
+                        Icons.Default.People,
+                        contentDescription = null
+                    )
+                },
+                label = {
+                    Text(
+                        stringResource(R.string.people),
+                        fontSize = 11.sp
+                    )
+                },
+                selected = selectedTab == 3,
+                onClick = {
+                    onTabSelected(3)
+                },
+                colors = itemColors
+            )
+
+            NavigationBarItem(
+                icon = {
+                    Icon(
+                        Icons.Default.ShoppingCart,
+                        contentDescription = null
+                    )
+                },
+                label = {
+                    Text(
+                        "To Buy",
+                        fontSize = 11.sp
+                    )
+                },
+                selected = selectedTab == 4,
+                onClick = {
+                    onTabSelected(4)
+                },
+                colors = itemColors
+            )
+        }
     }
 }

@@ -16,8 +16,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hninakari.saletracker.R
-import com.hninakari.saletracker.core.ui.theme.Primary
-import com.hninakari.saletracker.core.ui.theme.TextPrimary
 import com.hninakari.saletracker.data.model.DebtPayment
 import com.hninakari.saletracker.viewmodel.DebtViewModel
 import java.text.SimpleDateFormat
@@ -51,7 +49,7 @@ fun PaymentHistoryScreen(
                 text = stringResource(R.string.payment_history),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                color = Primary
+                color = MaterialTheme.colorScheme.primary
             )
         }
         
@@ -76,19 +74,19 @@ fun PaymentHistoryScreen(
                     Text(
                         text = "${stringResource(R.string.total)}: $${String.format("%.2f", debt.originalAmount)}",
                         fontSize = 16.sp,
-                        color = TextPrimary,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.Medium
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                 }
-                Text(stringResource(R.string.total_paid), fontSize = 14.sp, color = TextPrimary.copy(alpha = 0.6f))
+                Text(stringResource(R.string.total_paid), fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
                 Text(
                     "$${String.format("%.2f", totalPaid)}",
                     fontSize = 28.sp,
-                    color = Primary,
+                    color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold
                 )
-                Text("${payments.size} ${stringResource(R.string.payments)}", fontSize = 12.sp, color = TextPrimary.copy(alpha = 0.4f))
+                Text("${payments.size} ${stringResource(R.string.payments)}", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f))
             }
         }
         
@@ -113,7 +111,7 @@ fun PaymentHistoryScreen(
                     Text(
                         text = stringResource(R.string.no_payments_recorded),
                         fontSize = 18.sp,
-                        color = TextPrimary.copy(alpha = 0.6f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
                 }
             }
@@ -158,20 +156,20 @@ fun PaymentItem(
                     text = "$${String.format("%.2f", payment.amount)}",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Primary
+                    color = MaterialTheme.colorScheme.primary
                 )
                 if (payment.note.isNotEmpty()) {
                     Text(
                         text = payment.note,
                         fontSize = 12.sp,
-                        color = TextPrimary.copy(alpha = 0.6f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
                 }
             }
             Text(
                 text = dateFormat.format(Date(payment.date)),
                 fontSize = 12.sp,
-                color = TextPrimary.copy(alpha = 0.4f)
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
             )
         }
     }

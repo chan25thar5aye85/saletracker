@@ -17,8 +17,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hninakari.saletracker.R
-import com.hninakari.saletracker.core.ui.theme.Primary
-import com.hninakari.saletracker.core.ui.theme.TextPrimary
 import com.hninakari.saletracker.data.model.Product
 import com.hninakari.saletracker.viewmodel.ProductViewModel
 
@@ -43,13 +41,13 @@ fun ProductListScreen(
             Text(
                 text = stringResource(R.string.products),
                 fontSize = 24.sp,
-                color = Primary,
+                color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold
             )
             
             FloatingActionButton(
                 onClick = onAddProduct,
-                containerColor = Primary,
+                containerColor = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(48.dp)
             ) {
                 Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add_product))
@@ -77,12 +75,12 @@ fun ProductListScreen(
                     Text(
                         text = stringResource(R.string.no_products),
                         fontSize = 18.sp,
-                        color = TextPrimary.copy(alpha = 0.6f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
                     Text(
                         text = stringResource(R.string.tap_to_add_product),
                         fontSize = 14.sp,
-                        color = TextPrimary.copy(alpha = 0.4f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
                     )
                 }
             }
@@ -132,12 +130,12 @@ fun ProductItem(
                     text = product.name,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
-                    color = TextPrimary
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     text = "$${String.format("%.2f", product.price)}",
                     fontSize = 14.sp,
-                    color = Primary,
+                    color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold
                 )
             }
@@ -146,7 +144,7 @@ fun ProductItem(
                 Icon(
                     Icons.Default.Edit,
                     contentDescription = stringResource(R.string.edit),
-                    tint = TextPrimary.copy(alpha = 0.5f)
+                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                 )
             }
         }

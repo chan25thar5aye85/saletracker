@@ -15,8 +15,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hninakari.saletracker.R
-import com.hninakari.saletracker.core.ui.theme.Primary
-import com.hninakari.saletracker.core.ui.theme.TextPrimary
 import com.hninakari.saletracker.data.model.Expense
 import com.hninakari.saletracker.data.model.ExpenseType
 import com.hninakari.saletracker.utils.DateUtils
@@ -51,7 +49,7 @@ fun ExpenseListScreen(
                 DateUtils.DateFilter.ALL_TIME -> stringResource(R.string.all_time)
             },
             fontSize = 14.sp,
-            color = TextPrimary.copy(alpha = 0.6f),
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
             modifier = Modifier.padding(bottom = 8.dp)
         )
         
@@ -79,11 +77,11 @@ fun ExpenseListScreen(
                         .padding(14.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(stringResource(R.string.business), fontSize = 12.sp, color = TextPrimary.copy(alpha = 0.6f))
+                    Text(stringResource(R.string.business), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
                     Text(
                         "$${String.format("%.2f", businessTotal)}",
                         fontSize = 20.sp,
-                        color = Primary,
+                        color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -108,7 +106,7 @@ fun ExpenseListScreen(
                         .padding(14.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(stringResource(R.string.personal), fontSize = 12.sp, color = TextPrimary.copy(alpha = 0.6f))
+                    Text(stringResource(R.string.personal), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
                     Text(
                         "$${String.format("%.2f", personalTotal)}",
                         fontSize = 20.sp,
@@ -140,12 +138,12 @@ fun ExpenseListScreen(
                     Text(
                         text = stringResource(R.string.no_expenses_for_filter),
                         fontSize = 18.sp,
-                        color = TextPrimary.copy(alpha = 0.6f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
                     Text(
                         text = stringResource(R.string.try_changing_filter),
                         fontSize = 14.sp,
-                        color = TextPrimary.copy(alpha = 0.4f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
                     )
                 }
             }
@@ -206,7 +204,7 @@ fun ExpenseItem(
                                 clip = false
                             )
                             .background(
-                                if (expense.type == ExpenseType.BUSINESS) Primary else MaterialTheme.colorScheme.error,
+                                if (expense.type == ExpenseType.BUSINESS) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
                                 RoundedCornerShape(50)
                             )
                     )
@@ -214,14 +212,14 @@ fun ExpenseItem(
                         text = if (expense.type == ExpenseType.BUSINESS) "🏢 စီးပွားရေး" else "👤 ကိုယ်ပိုင်",
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Medium,
-                        color = if (expense.type == ExpenseType.BUSINESS) Primary else MaterialTheme.colorScheme.error
+                        color = if (expense.type == ExpenseType.BUSINESS) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
                     )
                 }
                 
                 Text(
                     text = dateFormat.format(Date(expense.date)),
                     fontSize = 12.sp,
-                    color = TextPrimary.copy(alpha = 0.4f)
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
                 )
             }
             
@@ -236,14 +234,14 @@ fun ExpenseItem(
                     text = "$${String.format("%.2f", expense.amount)}",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
-                    color = if (expense.type == ExpenseType.BUSINESS) Primary else MaterialTheme.colorScheme.error
+                    color = if (expense.type == ExpenseType.BUSINESS) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
                 )
                 
                 Text(
                     text = expense.category.name.replace("_", " ").lowercase()
                         .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() },
                     fontSize = 13.sp,
-                    color = TextPrimary.copy(alpha = 0.5f)
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                 )
             }
             
@@ -252,7 +250,7 @@ fun ExpenseItem(
                 Text(
                     text = "📝 ${expense.description}",
                     fontSize = 12.sp,
-                    color = TextPrimary.copy(alpha = 0.5f)
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                 )
             }
         }

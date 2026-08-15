@@ -17,8 +17,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hninakari.saletracker.R
-import com.hninakari.saletracker.core.ui.theme.Primary
-import com.hninakari.saletracker.core.ui.theme.TextPrimary
 import com.hninakari.saletracker.data.model.Person
 import com.hninakari.saletracker.data.model.PersonType
 import com.hninakari.saletracker.viewmodel.PersonViewModel
@@ -45,13 +43,13 @@ fun SupplierListScreen(
             Text(
                 text = stringResource(R.string.suppliers),
                 fontSize = 24.sp,
-                color = Primary,
+                color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold
             )
             
             FloatingActionButton(
                 onClick = onAddClick,
-                containerColor = Primary,
+                containerColor = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(48.dp)
             ) {
                 Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add_supplier))
@@ -79,12 +77,12 @@ fun SupplierListScreen(
                     Text(
                         text = stringResource(R.string.no_suppliers),
                         fontSize = 18.sp,
-                        color = TextPrimary.copy(alpha = 0.6f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
                     Text(
                         text = stringResource(R.string.tap_to_add_supplier),
                         fontSize = 14.sp,
-                        color = TextPrimary.copy(alpha = 0.4f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
                     )
                 }
             }
@@ -134,18 +132,18 @@ fun SupplierCard(
                     text = supplier.name,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium,
-                    color = TextPrimary
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     text = supplier.phone.ifEmpty { stringResource(R.string.no_phone) },
                     fontSize = 14.sp,
-                    color = TextPrimary.copy(alpha = 0.6f)
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
                 if (supplier.notes.isNotEmpty()) {
                     Text(
                         text = supplier.notes,
                         fontSize = 12.sp,
-                        color = TextPrimary.copy(alpha = 0.4f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
                     )
                 }
             }
@@ -153,7 +151,7 @@ fun SupplierCard(
             Icon(
                 Icons.Default.ChevronRight,
                 contentDescription = null,
-                tint = TextPrimary.copy(alpha = 0.3f)
+                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
             )
         }
     }

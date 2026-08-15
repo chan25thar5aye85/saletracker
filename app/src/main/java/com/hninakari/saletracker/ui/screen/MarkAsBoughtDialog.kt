@@ -14,8 +14,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.hninakari.saletracker.core.ui.theme.Primary
-import com.hninakari.saletracker.core.ui.theme.TextPrimary
 import com.hninakari.saletracker.data.model.Person
 import com.hninakari.saletracker.viewmodel.ToBuyItemWithProduct
 
@@ -54,7 +52,7 @@ fun MarkAsBoughtDialog(
                 Text(
                     text = "✅ ဝယ်ယူမှုအတည်ပြုရန်",
                     fontSize = 18.sp,
-                    color = Primary,
+                    color = MaterialTheme.colorScheme.primary,
                     fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
                 )
                 
@@ -74,7 +72,7 @@ fun MarkAsBoughtDialog(
                         Text(
                             text = "ဝယ်မည့်ပစ္စည်းများ (${items.size})",
                             fontSize = 12.sp,
-                            color = TextPrimary.copy(alpha = 0.6f)
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         items.forEach { item ->
@@ -85,13 +83,13 @@ fun MarkAsBoughtDialog(
                                 Text(
                                     text = "${item.product?.name} × ${item.item.quantity}",
                                     fontSize = 13.sp,
-                                    color = TextPrimary
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
                                     text = "$${String.format("%.2f", (item.product?.price ?: 0.0) * item.item.quantity)}",
                                     fontSize = 13.sp,
                                     fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
-                                    color = Primary
+                                    color = MaterialTheme.colorScheme.primary
                                 )
                             }
                         }
@@ -106,13 +104,13 @@ fun MarkAsBoughtDialog(
                                 text = "စုစုပေါင်း",
                                 fontSize = 14.sp,
                                 fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
-                                color = TextPrimary
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
                                 text = "$${String.format("%.2f", totalAmount)}",
                                 fontSize = 16.sp,
                                 fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
-                                color = Primary
+                                color = MaterialTheme.colorScheme.primary
                             )
                         }
                     }
@@ -135,8 +133,8 @@ fun MarkAsBoughtDialog(
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = supplierExpanded) },
                         textStyle = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Primary,
-                            unfocusedBorderColor = TextPrimary.copy(alpha = 0.3f)
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
                         )
                     )
                     
@@ -167,8 +165,8 @@ fun MarkAsBoughtDialog(
                     maxLines = 2,
                     textStyle = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Primary,
-                        unfocusedBorderColor = TextPrimary.copy(alpha = 0.3f)
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
                     )
                 )
                 
@@ -194,7 +192,7 @@ fun MarkAsBoughtDialog(
                             onConfirm(selectedSupplierId, note, "")
                         },
                         modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.buttonColors(containerColor = Primary),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Text("အတည်ပြုမည်", fontSize = 13.sp)

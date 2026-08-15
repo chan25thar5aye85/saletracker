@@ -146,4 +146,6 @@
     <string name="remaining">ကျန်</string>
     <string name="paid">ပေးချေပြီး</string>
     <string name="all_good">အားလုံးအဆင်ပြေပါတယ်! 🎉</string>
+    <string name="enter_valid_amount">ငွေပမာဏမှန်ကန်စွာထည့်ပါ</string>
+    <string name="payment_type_short">ငွေပေးချေမှု</string>
 </resources>

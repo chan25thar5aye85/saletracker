@@ -11,7 +11,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.hninakari.saletracker.R
-import com.hninakari.saletracker.core.ui.theme.Primary
 import com.hninakari.saletracker.utils.LanguageManager
 
 @Composable
@@ -37,7 +36,7 @@ fun LanguageSelectionDialog(
                 Text(
                     text = stringResource(R.string.select_language),
                     fontSize = 24.sp,
-                    color = Primary
+                    color = MaterialTheme.colorScheme.primary
                 )
                 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -52,7 +51,7 @@ fun LanguageSelectionDialog(
                         },
                     colors = CardDefaults.cardColors(
                         containerColor = if (currentLanguage == LanguageManager.ENGLISH) 
-                            Primary.copy(alpha = 0.1f) 
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.1f) 
                         else 
                             MaterialTheme.colorScheme.surface
                     )
@@ -69,7 +68,7 @@ fun LanguageSelectionDialog(
                             fontSize = 18.sp
                         )
                         if (currentLanguage == LanguageManager.ENGLISH) {
-                            Text("✓", color = Primary, fontSize = 20.sp)
+                            Text("✓", color = MaterialTheme.colorScheme.primary, fontSize = 20.sp)
                         }
                     }
                 }
@@ -84,7 +83,7 @@ fun LanguageSelectionDialog(
                         },
                     colors = CardDefaults.cardColors(
                         containerColor = if (currentLanguage == LanguageManager.MYANMAR) 
-                            Primary.copy(alpha = 0.1f) 
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.1f) 
                         else 
                             MaterialTheme.colorScheme.surface
                     )
@@ -101,7 +100,7 @@ fun LanguageSelectionDialog(
                             fontSize = 18.sp
                         )
                         if (currentLanguage == LanguageManager.MYANMAR) {
-                            Text("✓", color = Primary, fontSize = 20.sp)
+                            Text("✓", color = MaterialTheme.colorScheme.primary, fontSize = 20.sp)
                         }
                     }
                 }

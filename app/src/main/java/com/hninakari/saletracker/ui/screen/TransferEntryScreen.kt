@@ -14,8 +14,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hninakari.saletracker.R
-import com.hninakari.saletracker.core.ui.theme.Primary
-import com.hninakari.saletracker.core.ui.theme.TextPrimary
 import com.hninakari.saletracker.data.model.Transfer
 import com.hninakari.saletracker.data.model.TransferDirection
 import com.hninakari.saletracker.data.model.TransferService
@@ -31,15 +29,15 @@ fun TransferEntryScreen(
     var selectedService by remember { mutableStateOf(TransferService.KPAY) }
     var selectedDirection by remember { mutableStateOf(TransferDirection.OUT) }
     var notes by remember { mutableStateOf("") }
-    
+
     var amountError by remember { mutableStateOf(false) }
     var feeError by remember { mutableStateOf(false) }
-    
-    // Dropdown states
+
     var directionExpanded by remember { mutableStateOf(false) }
     var serviceExpanded by remember { mutableStateOf(false) }
-    
+
     val focusManager = LocalFocusManager.current
+    val colorScheme = MaterialTheme.colorScheme
 
     Column(
         modifier = Modifier
@@ -49,43 +47,78 @@ fun TransferEntryScreen(
             .padding(bottom = 100.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Direction and Service in a compact row
+
+        // --------------------------------------------------------
+        // DIRECTION AND SERVICE
+        // --------------------------------------------------------
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            // Direction Dropdown
+
+            // ----------------------------------------------------
+            // DIRECTION DROPDOWN
+            // ----------------------------------------------------
+
             ExposedDropdownMenuBox(
                 expanded = directionExpanded,
-                onExpandedChange = { directionExpanded = !directionExpanded },
+                onExpandedChange = {
+                    directionExpanded = !directionExpanded
+                },
                 modifier = Modifier.weight(1f)
             ) {
+
                 OutlinedTextField(
-                    value = if (selectedDirection == TransferDirection.IN) "📥 IN" else "📤 OUT",
+                    value = if (
+                        selectedDirection == TransferDirection.IN
+                    ) {
+                        "📥 IN"
+                    } else {
+                        "📤 OUT"
+                    },
                     onValueChange = {},
                     readOnly = true,
-                    label = { Text("လမ်းကြောင်း") },
+                    label = {
+                        Text("လမ်းကြောင်း")
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .menuAnchor(),
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = directionExpanded) },
+                        .menuAnchor(
+                            MenuAnchorType.PrimaryNotEditable
+                        ),
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(
+                            expanded = directionExpanded
+                        )
+                    },
                     singleLine = true,
-                    textStyle = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp)
+                    textStyle = MaterialTheme.typography.bodyMedium.copy(
+                        fontSize = 14.sp
+                    )
                 )
-                
+
                 ExposedDropdownMenu(
                     expanded = directionExpanded,
-                    onDismissRequest = { directionExpanded = false }
+                    onDismissRequest = {
+                        directionExpanded = false
+                    }
                 ) {
+
                     DropdownMenuItem(
-                        text = { Text("📥 IN") },
+                        text = {
+                            Text("📥 IN")
+                        },
                         onClick = {
                             selectedDirection = TransferDirection.IN
                             directionExpanded = false
                         }
                     )
+
                     DropdownMenuItem(
-                        text = { Text("📤 OUT") },
+                        text = {
+                            Text("📤 OUT")
+                        },
                         onClick = {
                             selectedDirection = TransferDirection.OUT
                             directionExpanded = false
@@ -93,39 +126,69 @@ fun TransferEntryScreen(
                     )
                 }
             }
-            
-            // Service Dropdown
+
+            // ----------------------------------------------------
+            // SERVICE DROPDOWN
+            // ----------------------------------------------------
+
             ExposedDropdownMenuBox(
                 expanded = serviceExpanded,
-                onExpandedChange = { serviceExpanded = !serviceExpanded },
+                onExpandedChange = {
+                    serviceExpanded = !serviceExpanded
+                },
                 modifier = Modifier.weight(1f)
             ) {
+
                 OutlinedTextField(
-                    value = if (selectedService == TransferService.KPAY) "KPay" else "WavePay",
+                    value = if (
+                        selectedService == TransferService.KPAY
+                    ) {
+                        "KPay"
+                    } else {
+                        "WavePay"
+                    },
                     onValueChange = {},
                     readOnly = true,
-                    label = { Text("ဝန်ဆောင်မှု") },
+                    label = {
+                        Text("ဝန်ဆောင်မှု")
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .menuAnchor(),
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = serviceExpanded) },
+                        .menuAnchor(
+                            MenuAnchorType.PrimaryNotEditable
+                        ),
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(
+                            expanded = serviceExpanded
+                        )
+                    },
                     singleLine = true,
-                    textStyle = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp)
+                    textStyle = MaterialTheme.typography.bodyMedium.copy(
+                        fontSize = 14.sp
+                    )
                 )
-                
+
                 ExposedDropdownMenu(
                     expanded = serviceExpanded,
-                    onDismissRequest = { serviceExpanded = false }
+                    onDismissRequest = {
+                        serviceExpanded = false
+                    }
                 ) {
+
                     DropdownMenuItem(
-                        text = { Text("KPay") },
+                        text = {
+                            Text("KPay")
+                        },
                         onClick = {
                             selectedService = TransferService.KPAY
                             serviceExpanded = false
                         }
                     )
+
                     DropdownMenuItem(
-                        text = { Text("WavePay") },
+                        text = {
+                            Text("WavePay")
+                        },
                         onClick = {
                             selectedService = TransferService.WAVEPAY
                             serviceExpanded = false
@@ -134,86 +197,144 @@ fun TransferEntryScreen(
                 }
             }
         }
-        
+
         Spacer(modifier = Modifier.height(12.dp))
-        
-        // Amount field - using label instead of placeholder
+
+        // --------------------------------------------------------
+        // AMOUNT
+        // --------------------------------------------------------
+
         OutlinedTextField(
             value = amount,
-            onValueChange = { 
-                val englishDigits = NumberUtils.toEnglishDigits(it)
-                val filtered = englishDigits.filter { char -> char.isDigit() || char == '.' }
+            onValueChange = {
+
+                val englishDigits =
+                    NumberUtils.toEnglishDigits(it)
+
+                val filtered = englishDigits.filter { char ->
+                    char.isDigit() || char == '.'
+                }
+
                 amount = filtered
                 amountError = false
             },
-            label = { Text(stringResource(R.string.amount)) },
-            modifier = Modifier
-                .fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+            label = {
+                Text(stringResource(R.string.amount))
+            },
+            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Decimal
+            ),
             isError = amountError,
             supportingText = {
                 if (amountError) {
-                    Text("Invalid", fontSize = 10.sp)
+                    Text(
+                        text = "Invalid",
+                        fontSize = 10.sp,
+                        color = colorScheme.error
+                    )
                 }
             },
             singleLine = true,
-            textStyle = MaterialTheme.typography.bodyMedium.copy(fontSize = 16.sp)
+            textStyle = MaterialTheme.typography.bodyMedium.copy(
+                fontSize = 16.sp
+            )
         )
-        
+
         Spacer(modifier = Modifier.height(8.dp))
-        
-        // Fee field - using label instead of placeholder
+
+        // --------------------------------------------------------
+        // FEE
+        // --------------------------------------------------------
+
         OutlinedTextField(
             value = fee,
-            onValueChange = { 
-                val englishDigits = NumberUtils.toEnglishDigits(it)
-                val filtered = englishDigits.filter { char -> char.isDigit() || char == '.' }
+            onValueChange = {
+
+                val englishDigits =
+                    NumberUtils.toEnglishDigits(it)
+
+                val filtered = englishDigits.filter { char ->
+                    char.isDigit() || char == '.'
+                }
+
                 fee = filtered
                 feeError = false
             },
-            label = { Text(stringResource(R.string.fee)) },
-            modifier = Modifier
-                .fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+            label = {
+                Text(stringResource(R.string.fee))
+            },
+            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Decimal
+            ),
             isError = feeError,
             supportingText = {
                 if (feeError) {
-                    Text("Invalid", fontSize = 10.sp)
+                    Text(
+                        text = "Invalid",
+                        fontSize = 10.sp,
+                        color = colorScheme.error
+                    )
                 }
             },
             singleLine = true,
-            textStyle = MaterialTheme.typography.bodyMedium.copy(fontSize = 16.sp)
+            textStyle = MaterialTheme.typography.bodyMedium.copy(
+                fontSize = 16.sp
+            )
         )
-        
+
         Spacer(modifier = Modifier.height(12.dp))
-        
+
+        // --------------------------------------------------------
+        // NOTES
+        // --------------------------------------------------------
+
         OutlinedTextField(
             value = notes,
-            onValueChange = { notes = it },
-            label = { Text(stringResource(R.string.notes_optional)) },
+            onValueChange = {
+                notes = it
+            },
+            label = {
+                Text(stringResource(R.string.notes_optional))
+            },
             modifier = Modifier.fillMaxWidth(),
             minLines = 2,
             maxLines = 3
         )
-        
+
         Spacer(modifier = Modifier.height(20.dp))
-        
+
+        // --------------------------------------------------------
+        // ADD TRANSFER
+        // --------------------------------------------------------
+
         Button(
             onClick = {
-                val cleanAmount = NumberUtils.toDouble(amount)
-                val cleanFee = NumberUtils.toDouble(fee) ?: 0.0
-                
+
+                val cleanAmount =
+                    NumberUtils.toDouble(amount)
+
+                val cleanFee =
+                    NumberUtils.toDouble(fee) ?: 0.0
+
                 var valid = true
-                if (cleanAmount == null || cleanAmount <= 0.0) {
+
+                if (
+                    cleanAmount == null ||
+                    cleanAmount <= 0.0
+                ) {
                     amountError = true
                     valid = false
                 }
+
                 if (cleanFee < 0.0) {
                     feeError = true
                     valid = false
                 }
-                
+
                 if (valid) {
+
                     val transfer = Transfer(
                         service = selectedService,
                         direction = selectedDirection,
@@ -223,41 +344,73 @@ fun TransferEntryScreen(
                         customerPhone = "",
                         notes = notes.trim()
                     )
+
                     onTransferAdded(transfer)
+
                     amount = ""
                     fee = ""
                     notes = ""
-                    selectedService = TransferService.KPAY
-                    selectedDirection = TransferDirection.OUT
+
+                    selectedService =
+                        TransferService.KPAY
+
+                    selectedDirection =
+                        TransferDirection.OUT
+
                     amountError = false
                     feeError = false
+
                     focusManager.clearFocus()
                 }
             },
-            modifier = Modifier.fillMaxWidth().height(50.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Primary)
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colorScheme.primary,
+                contentColor = colorScheme.onPrimary
+            )
         ) {
-            Text(stringResource(R.string.add_transfer_button), fontSize = 16.sp)
+            Text(
+                text = stringResource(
+                    R.string.add_transfer_button
+                ),
+                fontSize = 16.sp
+            )
         }
-        
+
         Spacer(modifier = Modifier.height(6.dp))
-        
+
+        // --------------------------------------------------------
+        // CLEAR
+        // --------------------------------------------------------
+
         TextButton(
             onClick = {
+
                 amount = ""
                 fee = ""
                 notes = ""
-                selectedService = TransferService.KPAY
-                selectedDirection = TransferDirection.OUT
+
+                selectedService =
+                    TransferService.KPAY
+
+                selectedDirection =
+                    TransferDirection.OUT
+
                 amountError = false
                 feeError = false
+
                 focusManager.clearFocus()
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(stringResource(R.string.clear), fontSize = 14.sp)
+            Text(
+                text = stringResource(R.string.clear),
+                fontSize = 14.sp
+            )
         }
-        
+
         Spacer(modifier = Modifier.height(100.dp))
     }
 }

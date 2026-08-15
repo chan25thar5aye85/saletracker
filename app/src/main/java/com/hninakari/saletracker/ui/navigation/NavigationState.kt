@@ -46,13 +46,7 @@ class NavigationState {
     val showFilterDropdown = mutableStateOf(false)
     val showSettings = mutableStateOf(false)
     
-    // Success dialogs
-    val showSaleSuccess = mutableStateOf(false)
-    val showExpenseSuccess = mutableStateOf(false)
-    val showTransferSuccess = mutableStateOf(false)
-    val lastSale = mutableStateOf<Sale?>(null)
-    val lastExpense = mutableStateOf<Expense?>(null)
-    val lastTransfer = mutableStateOf<Transfer?>(null)
+    // ⭐ REMOVED: Success dialogs - no longer needed
     
     // Sidebar/Drawer
     val showDashboard = mutableStateOf(false)

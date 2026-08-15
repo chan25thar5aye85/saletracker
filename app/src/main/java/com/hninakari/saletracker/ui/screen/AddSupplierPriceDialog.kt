@@ -14,8 +14,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.hninakari.saletracker.core.ui.theme.Primary
-import com.hninakari.saletracker.core.ui.theme.TextPrimary
 import com.hninakari.saletracker.data.model.Person
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -54,14 +52,14 @@ fun AddSupplierPriceDialog(
                 Text(
                     text = if (isEditing) "စျေးနှုန်းပြင်ရန်" else "ပေးသွင်းသူစျေးထည့်ရန်",
                     fontSize = 18.sp,
-                    color = Primary,
+                    color = MaterialTheme.colorScheme.primary,
                     fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
                 )
                 
                 Text(
                     text = "ပစ္စည်း: $productName",
                     fontSize = 14.sp,
-                    color = TextPrimary.copy(alpha = 0.6f)
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
                 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -81,8 +79,8 @@ fun AddSupplierPriceDialog(
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = supplierExpanded) },
                         textStyle = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Primary,
-                            unfocusedBorderColor = TextPrimary.copy(alpha = 0.3f)
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
                         )
                     )
                     
@@ -123,8 +121,8 @@ fun AddSupplierPriceDialog(
                     singleLine = true,
                     textStyle = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Primary,
-                        unfocusedBorderColor = TextPrimary.copy(alpha = 0.3f)
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
                     )
                 )
                 
@@ -137,12 +135,12 @@ fun AddSupplierPriceDialog(
                     Checkbox(
                         checked = isDefault,
                         onCheckedChange = { isDefault = it },
-                        colors = CheckboxDefaults.colors(checkedColor = Primary)
+                        colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.primary)
                     )
                     Text(
                         text = "ဤပေးသွင်းသူကို မူလအဖြစ်သတ်မှတ်မည်",
                         fontSize = 13.sp,
-                        color = TextPrimary.copy(alpha = 0.7f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                     )
                 }
                 
@@ -174,7 +172,7 @@ fun AddSupplierPriceDialog(
                             }
                         },
                         modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.buttonColors(containerColor = Primary),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Text(if (isEditing) "သိမ်းမည်" else "ထည့်မည်", fontSize = 14.sp)

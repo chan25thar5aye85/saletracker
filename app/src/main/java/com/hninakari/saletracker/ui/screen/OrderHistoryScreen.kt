@@ -17,8 +17,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hninakari.saletracker.R
-import com.hninakari.saletracker.core.ui.theme.Primary
-import com.hninakari.saletracker.core.ui.theme.TextPrimary
 import com.hninakari.saletracker.data.model.Order
 import com.hninakari.saletracker.viewmodel.OrderViewModel
 import java.text.SimpleDateFormat
@@ -48,7 +46,7 @@ fun OrderHistoryScreen(
                 text = stringResource(R.string.order_history),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                color = Primary
+                color = MaterialTheme.colorScheme.primary
             )
         }
 
@@ -73,7 +71,7 @@ fun OrderHistoryScreen(
                     Text(
                         text = stringResource(R.string.no_orders),
                         fontSize = 18.sp,
-                        color = TextPrimary.copy(alpha = 0.6f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
                 }
             }
@@ -122,19 +120,19 @@ fun OrderHistoryCard(
                     text = "#${order.id} - ${dateFormat.format(Date(order.date))}",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
-                    color = TextPrimary
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 if (order.note.isNotEmpty()) {
                     Text(
                         text = order.note,
                         fontSize = 12.sp,
-                        color = TextPrimary.copy(alpha = 0.6f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
                 }
                 Text(
                     text = "${stringResource(R.string.total)}: $${String.format("%.2f", order.totalAmount)}",
                     fontSize = 13.sp,
-                    color = Primary,
+                    color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Medium
                 )
             }

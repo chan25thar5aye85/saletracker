@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,8 +15,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hninakari.saletracker.R
-import com.hninakari.saletracker.core.ui.theme.Primary
-import com.hninakari.saletracker.core.ui.theme.TextPrimary
 import com.hninakari.saletracker.data.model.Person
 import com.hninakari.saletracker.data.model.PersonType
 import com.hninakari.saletracker.viewmodel.PersonViewModel
@@ -30,7 +26,7 @@ fun PersonListScreen(
     onAddClick: () -> Unit = {}
 ) {
     val people by personViewModel.allPeople.collectAsState(initial = emptyList())
-    
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -51,16 +47,21 @@ fun PersonListScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Text("👤", fontSize = 48.sp)
+                    Text(
+                        text = "👤",
+                        fontSize = 48.sp
+                    )
+
                     Text(
                         text = stringResource(R.string.no_people_added),
                         fontSize = 18.sp,
-                        color = TextPrimary.copy(alpha = 0.6f)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
+
                     Text(
                         text = stringResource(R.string.tap_to_add),
                         fontSize = 14.sp,
-                        color = TextPrimary.copy(alpha = 0.4f)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                     )
                 }
             }
@@ -110,27 +111,35 @@ fun PersonCard(
                     text = person.name,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium,
-                    color = TextPrimary
+                    color = MaterialTheme.colorScheme.onSurface
                 )
+
                 Text(
-                    text = person.phone.ifEmpty { stringResource(R.string.no_phone) },
+                    text = person.phone.ifEmpty {
+                        stringResource(R.string.no_phone)
+                    },
                     fontSize = 14.sp,
-                    color = TextPrimary.copy(alpha = 0.6f)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            
+
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = when (person.type) {
-                        PersonType.CUSTOMER -> "👤 ${stringResource(R.string.customer)}"
-                        PersonType.SUPPLIER -> "🏢 ${stringResource(R.string.supplier)}"
-                        PersonType.OTHER -> "👤 ${stringResource(R.string.other)}"
+                        PersonType.CUSTOMER ->
+                            "👤 ${stringResource(R.string.customer)}"
+
+                        PersonType.SUPPLIER ->
+                            "🏢 ${stringResource(R.string.supplier)}"
+
+                        PersonType.OTHER ->
+                            "👤 ${stringResource(R.string.other)}"
                     },
                     fontSize = 12.sp,
-                    color = TextPrimary.copy(alpha = 0.5f)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }

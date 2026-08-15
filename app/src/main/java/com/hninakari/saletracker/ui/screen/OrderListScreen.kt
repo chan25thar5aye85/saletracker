@@ -17,8 +17,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hninakari.saletracker.R
-import com.hninakari.saletracker.core.ui.theme.Primary
-import com.hninakari.saletracker.core.ui.theme.TextPrimary
 import com.hninakari.saletracker.data.model.Order
 import com.hninakari.saletracker.viewmodel.OrderViewModel
 import java.text.SimpleDateFormat
@@ -52,12 +50,12 @@ fun OrderListScreen(
                     text = stringResource(R.string.order_list),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Primary
+                    color = MaterialTheme.colorScheme.primary
                 )
                 Text(
                     text = "${stringResource(R.string.orders)} ${orders.size}",
                     fontSize = 13.sp,
-                    color = TextPrimary.copy(alpha = 0.6f)
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
             }
             
@@ -67,7 +65,7 @@ fun OrderListScreen(
                 }
                 FloatingActionButton(
                     onClick = onNewOrder,
-                    containerColor = Primary,
+                    containerColor = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(48.dp)
                 ) {
                     Icon(Icons.Default.Add, contentDescription = stringResource(R.string.new_order))
@@ -96,12 +94,12 @@ fun OrderListScreen(
                     Text(
                         text = stringResource(R.string.no_orders),
                         fontSize = 18.sp,
-                        color = TextPrimary.copy(alpha = 0.6f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
                     Text(
                         text = stringResource(R.string.tap_to_create_order),
                         fontSize = 14.sp,
-                        color = TextPrimary.copy(alpha = 0.4f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
                     )
                 }
             }
@@ -116,7 +114,7 @@ fun OrderListScreen(
                             text = "📦 $supplierName",
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Medium,
-                            color = Primary,
+                            color = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.padding(vertical = 4.dp)
                         )
                     }
@@ -173,32 +171,32 @@ fun OrderCard(
                         text = "#${order.id} - ${dateFormat.format(Date(order.date))}",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
-                        color = TextPrimary
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     if (order.note.isNotEmpty()) {
                         Text(
                             text = order.note,
                             fontSize = 12.sp,
-                            color = TextPrimary.copy(alpha = 0.6f)
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                         )
                     }
                     Text(
                         text = "${stringResource(R.string.total)}: $${String.format("%.2f", order.totalAmount)}",
                         fontSize = 13.sp,
-                        color = Primary,
+                        color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Medium
                     )
                 }
                 
                 Surface(
                     shape = RoundedCornerShape(8.dp),
-                    color = Primary.copy(alpha = 0.15f),
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                 ) {
                     Text(
                         text = stringResource(R.string.draft),
                         fontSize = 11.sp,
-                        color = Primary,
+                        color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                     )
                 }
@@ -225,7 +223,7 @@ fun OrderCard(
                     onClick = onComplete,
                     modifier = Modifier.weight(1f).height(36.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Primary,
+                        containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.onPrimary
                     ),
                     shape = RoundedCornerShape(6.dp)

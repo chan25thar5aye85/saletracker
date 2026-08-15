@@ -18,8 +18,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hninakari.saletracker.R
-import com.hninakari.saletracker.core.ui.theme.Primary
-import com.hninakari.saletracker.core.ui.theme.TextPrimary
 import com.hninakari.saletracker.data.model.PurchaseBatch
 import com.hninakari.saletracker.viewmodel.ToBuyViewModel
 import java.text.SimpleDateFormat
@@ -48,7 +46,7 @@ fun PurchaseHistoryScreen(
             Text(
                 text = stringResource(R.string.payment_history),
                 fontSize = 24.sp,
-                color = Primary,
+                color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold
             )
         }
@@ -74,7 +72,7 @@ fun PurchaseHistoryScreen(
                     Text(
                         text = stringResource(R.string.no_payments_recorded),
                         fontSize = 18.sp,
-                        color = TextPrimary.copy(alpha = 0.6f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
                 }
             }
@@ -123,19 +121,19 @@ fun PurchaseBatchCard(
                     text = "#${batch.id} - ${dateFormat.format(Date(batch.date))}",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
-                    color = TextPrimary
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 if (batch.note.isNotEmpty()) {
                     Text(
                         text = batch.note,
                         fontSize = 12.sp,
-                        color = TextPrimary.copy(alpha = 0.6f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
                 }
                 Text(
                     text = "${stringResource(R.string.total)}: $${String.format("%.2f", batch.totalAmount)}",
                     fontSize = 13.sp,
-                    color = Primary,
+                    color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Medium
                 )
             }
@@ -143,7 +141,7 @@ fun PurchaseBatchCard(
             Icon(
                 Icons.Default.ChevronRight,
                 contentDescription = null,
-                tint = TextPrimary.copy(alpha = 0.4f)
+                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
             )
         }
     }

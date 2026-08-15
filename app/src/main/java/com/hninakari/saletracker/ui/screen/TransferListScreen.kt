@@ -15,8 +15,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hninakari.saletracker.R
-import com.hninakari.saletracker.core.ui.theme.Primary
-import com.hninakari.saletracker.core.ui.theme.TextPrimary
 import com.hninakari.saletracker.data.model.Transfer
 import com.hninakari.saletracker.data.model.TransferDirection
 import com.hninakari.saletracker.data.model.TransferService
@@ -50,7 +48,7 @@ fun TransferListScreen(
                 DateUtils.DateFilter.ALL_TIME -> stringResource(R.string.all_time)
             },
             fontSize = 14.sp,
-            color = TextPrimary.copy(alpha = 0.6f),
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
             modifier = Modifier.padding(bottom = 8.dp)
         )
         
@@ -78,11 +76,11 @@ fun TransferListScreen(
                         .padding(14.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(stringResource(R.string.total_fees), fontSize = 12.sp, color = TextPrimary.copy(alpha = 0.6f))
+                    Text(stringResource(R.string.total_fees), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
                     Text(
                         "$${String.format("%.2f", totalFees)}",
                         fontSize = 20.sp,
-                        color = Primary,
+                        color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -107,11 +105,11 @@ fun TransferListScreen(
                         .padding(14.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(stringResource(R.string.transactions), fontSize = 12.sp, color = TextPrimary.copy(alpha = 0.6f))
+                    Text(stringResource(R.string.transactions), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
                     Text(
                         "${transfers.size}",
                         fontSize = 20.sp,
-                        color = TextPrimary,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -139,12 +137,12 @@ fun TransferListScreen(
                     Text(
                         text = stringResource(R.string.no_transfers_for_filter),
                         fontSize = 18.sp,
-                        color = TextPrimary.copy(alpha = 0.6f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
                     Text(
                         text = stringResource(R.string.try_changing_filter),
                         fontSize = 14.sp,
-                        color = TextPrimary.copy(alpha = 0.4f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
                     )
                 }
             }
@@ -207,7 +205,7 @@ fun TransferItem(
                                 clip = false
                             )
                             .background(
-                                if (isIn) Primary else MaterialTheme.colorScheme.error,
+                                if (isIn) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
                                 RoundedCornerShape(50)
                             )
                     )
@@ -215,7 +213,7 @@ fun TransferItem(
                         text = if (isIn) "📥 ဝင်ငွေ" else "📤 ထွက်ငွေ",
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Medium,
-                        color = if (isIn) Primary else MaterialTheme.colorScheme.error
+                        color = if (isIn) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
                     )
                 }
                 
@@ -225,7 +223,7 @@ fun TransferItem(
                         TransferService.WAVEPAY -> stringResource(R.string.wavepay)
                     },
                     fontSize = 12.sp,
-                    color = TextPrimary.copy(alpha = 0.4f)
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
                 )
             }
             
@@ -240,20 +238,20 @@ fun TransferItem(
                     text = "$${String.format("%.2f", transfer.amount)}",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
-                    color = if (isIn) Primary else MaterialTheme.colorScheme.error
+                    color = if (isIn) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
                 )
                 
                 Text(
                     text = "${stringResource(R.string.fee)}: $${String.format("%.2f", transfer.fee)}",
                     fontSize = 13.sp,
-                    color = TextPrimary.copy(alpha = 0.5f)
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                 )
             }
             
             Text(
                 text = dateFormat.format(Date(transfer.date)),
                 fontSize = 12.sp,
-                color = TextPrimary.copy(alpha = 0.4f),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
                 modifier = Modifier.padding(top = 4.dp)
             )
         }

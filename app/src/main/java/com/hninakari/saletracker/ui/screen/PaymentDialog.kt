@@ -16,8 +16,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.hninakari.saletracker.R
-import com.hninakari.saletracker.core.ui.theme.Primary
-import com.hninakari.saletracker.core.ui.theme.TextPrimary
 import com.hninakari.saletracker.data.model.Debt
 
 @Composable
@@ -49,7 +47,7 @@ fun PaymentDialog(
                 Text(
                     text = stringResource(R.string.make_payment),
                     fontSize = 20.sp,
-                    color = Primary,
+                    color = MaterialTheme.colorScheme.primary,
                     fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
                 )
                 
@@ -80,8 +78,8 @@ fun PaymentDialog(
                     singleLine = true,
                     textStyle = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Primary,
-                        unfocusedBorderColor = TextPrimary.copy(alpha = 0.3f)
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
                     )
                 )
                 
@@ -97,8 +95,8 @@ fun PaymentDialog(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                     textStyle = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Primary,
-                        unfocusedBorderColor = TextPrimary.copy(alpha = 0.3f)
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
                     )
                 )
                 
@@ -130,7 +128,7 @@ fun PaymentDialog(
                             }
                         },
                         modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.buttonColors(containerColor = Primary),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Text(stringResource(R.string.pay_button), fontSize = 14.sp)

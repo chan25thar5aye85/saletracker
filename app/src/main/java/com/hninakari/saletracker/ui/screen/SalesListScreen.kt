@@ -15,8 +15,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hninakari.saletracker.R
-import com.hninakari.saletracker.core.ui.theme.Primary
-import com.hninakari.saletracker.core.ui.theme.TextPrimary
 import com.hninakari.saletracker.data.model.PaymentType
 import com.hninakari.saletracker.data.model.Sale
 import com.hninakari.saletracker.utils.DateUtils
@@ -49,7 +47,7 @@ fun SalesListScreen(
                 DateUtils.DateFilter.ALL_TIME -> stringResource(R.string.all_time)
             },
             fontSize = 14.sp,
-            color = TextPrimary.copy(alpha = 0.6f),
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
             modifier = Modifier.padding(bottom = 8.dp)
         )
         
@@ -75,20 +73,20 @@ fun SalesListScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(stringResource(R.string.total_sales), fontSize = 12.sp, color = TextPrimary.copy(alpha = 0.6f))
+                    Text(stringResource(R.string.total_sales), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
                     Text(
                         "$${String.format("%.2f", total)}",
                         fontSize = 24.sp,
-                        color = Primary,
+                        color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold
                     )
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(stringResource(R.string.entries), fontSize = 12.sp, color = TextPrimary.copy(alpha = 0.6f))
+                    Text(stringResource(R.string.entries), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
                     Text(
                         "${sales.size}",
                         fontSize = 24.sp,
-                        color = Primary,
+                        color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -116,12 +114,12 @@ fun SalesListScreen(
                     Text(
                         text = stringResource(R.string.no_sales_for_filter),
                         fontSize = 18.sp,
-                        color = TextPrimary.copy(alpha = 0.6f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
                     Text(
                         text = stringResource(R.string.try_changing_filter),
                         fontSize = 14.sp,
-                        color = TextPrimary.copy(alpha = 0.4f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
                     )
                 }
             }
@@ -170,7 +168,7 @@ fun SaleItem(
                     text = "$${String.format("%.2f", sale.amount)}",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Primary
+                    color = MaterialTheme.colorScheme.primary
                 )
                 Text(
                     text = when (sale.paymentType) {
@@ -179,13 +177,13 @@ fun SaleItem(
                         PaymentType.WAVEPAY -> "📱 ${stringResource(R.string.wavepay)}"
                     },
                     fontSize = 13.sp,
-                    color = TextPrimary.copy(alpha = 0.5f)
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                 )
             }
             Text(
                 text = dateFormat.format(Date(sale.date)),
                 fontSize = 12.sp,
-                color = TextPrimary.copy(alpha = 0.4f)
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
             )
         }
     }

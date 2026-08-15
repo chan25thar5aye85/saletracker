@@ -17,8 +17,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hninakari.saletracker.R
-import com.hninakari.saletracker.core.ui.theme.Primary
-import com.hninakari.saletracker.core.ui.theme.TextPrimary
 import com.hninakari.saletracker.data.model.Priority
 import com.hninakari.saletracker.viewmodel.ToBuyItemWithProduct
 import com.hninakari.saletracker.viewmodel.ToBuyViewModel
@@ -54,7 +52,7 @@ fun ToBuyScreen(
             Text(
                 text = "${stringResource(R.string.items_count)} $totalItems ${stringResource(R.string.entries)} | ${stringResource(R.string.estimated_total)} $${String.format("%.2f", totalEstimatedCost)}",
                 fontSize = 13.sp,
-                color = TextPrimary.copy(alpha = 0.6f)
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
             )
             
             Row {
@@ -63,7 +61,7 @@ fun ToBuyScreen(
                 }
                 FloatingActionButton(
                     onClick = onAddItem,
-                    containerColor = Primary,
+                    containerColor = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(40.dp)
                 ) {
                     Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add_item), modifier = Modifier.size(20.dp))
@@ -86,12 +84,12 @@ fun ToBuyScreen(
                         emptySet()
                     }
                 },
-                colors = CheckboxDefaults.colors(checkedColor = Primary)
+                colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.primary)
             )
             Text(
                 text = stringResource(R.string.select_all),
                 fontSize = 13.sp,
-                color = TextPrimary.copy(alpha = 0.6f)
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
             )
         }
         
@@ -116,12 +114,12 @@ fun ToBuyScreen(
                     Text(
                         text = stringResource(R.string.no_items_to_buy),
                         fontSize = 18.sp,
-                        color = TextPrimary.copy(alpha = 0.6f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
                     Text(
                         text = stringResource(R.string.tap_to_add_item),
                         fontSize = 14.sp,
-                        color = TextPrimary.copy(alpha = 0.4f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
                     )
                 }
             }
@@ -162,8 +160,8 @@ fun ToBuyScreen(
                     modifier = Modifier.weight(1f).height(48.dp),
                     enabled = selectedItems.isNotEmpty(),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (selectedItems.isNotEmpty()) Primary else MaterialTheme.colorScheme.surfaceVariant,
-                        contentColor = if (selectedItems.isNotEmpty()) MaterialTheme.colorScheme.onPrimary else TextPrimary.copy(alpha = 0.3f)
+                        containerColor = if (selectedItems.isNotEmpty()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
+                        contentColor = if (selectedItems.isNotEmpty()) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
                     )
                 ) {
                     Icon(Icons.Default.ShoppingCart, contentDescription = stringResource(R.string.create_order))
@@ -198,7 +196,7 @@ fun ToBuyItemRow(
             ),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) Primary.copy(alpha = 0.05f) else MaterialTheme.colorScheme.surface
+            containerColor = if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.05f) else MaterialTheme.colorScheme.surface
         )
     ) {
         Row(
@@ -210,7 +208,7 @@ fun ToBuyItemRow(
             Checkbox(
                 checked = isSelected,
                 onCheckedChange = { onToggle(item.item.id) },
-                colors = CheckboxDefaults.colors(checkedColor = Primary)
+                colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.primary)
             )
             
             Column(modifier = Modifier.weight(1f)) {
@@ -222,7 +220,7 @@ fun ToBuyItemRow(
                         text = product?.name ?: "Unknown",
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Medium,
-                        color = TextPrimary
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     if (item.item.note.isNotEmpty()) {
                         Text(text = "📝", fontSize = 12.sp)
@@ -235,7 +233,7 @@ fun ToBuyItemRow(
                     Text(
                         text = "${item.item.quantity} × $${String.format("%.2f", product?.price ?: 0.0)}",
                         fontSize = 12.sp,
-                        color = TextPrimary.copy(alpha = 0.6f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
                     Box(
                         modifier = Modifier
@@ -258,7 +256,7 @@ fun ToBuyItemRow(
                 text = "$${String.format("%.2f", (product?.price ?: 0.0) * item.item.quantity)}",
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
-                color = Primary
+                color = MaterialTheme.colorScheme.primary
             )
         }
     }

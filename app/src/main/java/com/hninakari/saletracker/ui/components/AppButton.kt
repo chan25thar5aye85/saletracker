@@ -3,8 +3,6 @@ package com.hninakari.saletracker.ui.components
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.hninakari.saletracker.core.ui.theme.PrimaryLight
-import com.hninakari.saletracker.core.ui.theme.Primary
 
 @Composable
 fun AppButton(
@@ -18,7 +16,7 @@ fun AppButton(
         modifier = modifier,
         enabled = enabled,
         colors = ButtonDefaults.buttonColors(
-            containerColor = PrimaryLight,
+            containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary,
             disabledContainerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
             disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
@@ -40,7 +38,7 @@ fun AppOutlinedButton(
         modifier = modifier,
         enabled = enabled,
         colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = Primary,
+            contentColor = MaterialTheme.colorScheme.primary,
             disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
         )
     ) {
@@ -60,7 +58,7 @@ fun AppTextButton(
         modifier = modifier,
         enabled = enabled,
         colors = ButtonDefaults.textButtonColors(
-            contentColor = Primary
+            contentColor = MaterialTheme.colorScheme.primary
         )
     ) {
         content()

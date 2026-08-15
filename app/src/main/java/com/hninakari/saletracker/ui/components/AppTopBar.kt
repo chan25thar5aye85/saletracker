@@ -2,11 +2,14 @@ package com.hninakari.saletracker.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.hninakari.saletracker.core.ui.theme.AppThemeColors
 import com.hninakari.saletracker.utils.DateUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,6 +35,11 @@ fun AppTopBar(
     showMenu: Boolean = true,
     onMenuClick: () -> Unit = {}
 ) {
+    val appColors = AppThemeColors.colors
+
+    val backgroundColor = appColors.barBackground
+    val contentColor = appColors.barContent
+
     TopAppBar(
         title = {
             Column {
@@ -39,88 +47,96 @@ fun AppTopBar(
                     text = title,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = contentColor
                 )
+
                 if (subtitle.isNotEmpty()) {
                     Text(
                         text = subtitle,
                         fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f)
+                        color = contentColor.copy(alpha = 0.6f)
                     )
                 }
             }
         },
+
         navigationIcon = {
             if (showMenu && !showBack) {
                 IconButton(onClick = onMenuClick) {
                     Icon(
-                        imageVector = Icons.Default.Menu,
+                        Icons.Default.Menu,
                         contentDescription = "Menu",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        tint = contentColor
                     )
                 }
             } else if (showBack) {
                 IconButton(onClick = onBack) {
                     Icon(
-                        imageVector = Icons.Default.ArrowBack,
+                        Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        tint = contentColor
                     )
                 }
             }
         },
+
         actions = {
             if (showFilter) {
                 IconButton(onClick = onFilterClick) {
                     Icon(
                         Icons.Default.FilterList,
                         contentDescription = "Filter",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        tint = contentColor
                     )
                 }
             }
+
             if (showLanguage) {
                 IconButton(onClick = onLanguageClick) {
                     Icon(
                         Icons.Default.Language,
                         contentDescription = "Language",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        tint = contentColor
                     )
                 }
             }
+
             if (showAddPerson) {
                 IconButton(onClick = onAddPersonClick) {
                     Icon(
                         Icons.Default.PersonAdd,
                         contentDescription = "Add Person",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        tint = contentColor
                     )
                 }
             }
+
             if (showAddDebt) {
                 IconButton(onClick = onAddDebtClick) {
                     Icon(
                         Icons.Default.Add,
                         contentDescription = "Add Debt",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        tint = contentColor
                     )
                 }
             }
+
             if (showSettings) {
                 IconButton(onClick = onSettingsClick) {
                     Icon(
                         Icons.Default.Settings,
                         contentDescription = "Settings",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        tint = contentColor
                     )
                 }
             }
         },
+
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer,
-            titleContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            navigationIconContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            actionIconContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+            containerColor = backgroundColor,
+            titleContentColor = contentColor,
+            navigationIconContentColor = contentColor,
+            actionIconContentColor = contentColor
         )
     )
 }

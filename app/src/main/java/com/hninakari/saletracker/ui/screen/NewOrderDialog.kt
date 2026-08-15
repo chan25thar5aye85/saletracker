@@ -19,8 +19,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.hninakari.saletracker.R
-import com.hninakari.saletracker.core.ui.theme.Primary
-import com.hninakari.saletracker.core.ui.theme.TextPrimary
 import com.hninakari.saletracker.data.model.Person
 import com.hninakari.saletracker.viewmodel.ToBuyItemWithProduct
 
@@ -60,7 +58,7 @@ fun NewOrderDialog(
                 Text(
                     text = stringResource(R.string.new_order),
                     fontSize = 18.sp,
-                    color = Primary,
+                    color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold
                 )
                 
@@ -79,17 +77,17 @@ fun NewOrderDialog(
                                 emptySet()
                             }
                         },
-                        colors = CheckboxDefaults.colors(checkedColor = Primary)
+                        colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.primary)
                     )
                     Text(
                         text = stringResource(R.string.select_all),
                         fontSize = 13.sp,
-                        color = TextPrimary.copy(alpha = 0.6f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
                     Text(
                         text = " (${selectedItems.size}/${items.size})",
                         fontSize = 12.sp,
-                        color = Primary
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
                 
@@ -121,7 +119,7 @@ fun NewOrderDialog(
                                             selectedItems - item.item.id
                                         }
                                     },
-                                    colors = CheckboxDefaults.colors(checkedColor = Primary)
+                                    colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.primary)
                                 )
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
@@ -132,14 +130,14 @@ fun NewOrderDialog(
                                     Text(
                                         text = "×${item.item.quantity} - $${String.format("%.2f", item.product?.price ?: 0.0)}",
                                         fontSize = 11.sp,
-                                        color = TextPrimary.copy(alpha = 0.5f)
+                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                                     )
                                 }
                                 Text(
                                     text = "$${String.format("%.2f", (item.product?.price ?: 0.0) * item.item.quantity)}",
                                     fontSize = 13.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = Primary
+                                    color = MaterialTheme.colorScheme.primary
                                 )
                             }
                         }
@@ -156,13 +154,13 @@ fun NewOrderDialog(
                         text = "${stringResource(R.string.total)}:",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = TextPrimary
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = "$${String.format("%.2f", totalAmount)}",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Primary
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
                 
@@ -183,8 +181,8 @@ fun NewOrderDialog(
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = supplierExpanded) },
                         textStyle = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Primary,
-                            unfocusedBorderColor = TextPrimary.copy(alpha = 0.3f)
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
                         )
                     )
                     
@@ -215,8 +213,8 @@ fun NewOrderDialog(
                     maxLines = 2,
                     textStyle = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Primary,
-                        unfocusedBorderColor = TextPrimary.copy(alpha = 0.3f)
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
                     )
                 )
                 
@@ -247,8 +245,8 @@ fun NewOrderDialog(
                         modifier = Modifier.weight(1f),
                         enabled = selectedItems.isNotEmpty(),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (selectedItems.isNotEmpty()) Primary else MaterialTheme.colorScheme.surfaceVariant,
-                            contentColor = if (selectedItems.isNotEmpty()) MaterialTheme.colorScheme.onPrimary else TextPrimary.copy(alpha = 0.3f)
+                            containerColor = if (selectedItems.isNotEmpty()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
+                            contentColor = if (selectedItems.isNotEmpty()) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
                         ),
                         shape = RoundedCornerShape(8.dp)
                     ) {

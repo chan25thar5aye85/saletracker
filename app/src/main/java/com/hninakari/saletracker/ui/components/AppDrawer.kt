@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hninakari.saletracker.core.ui.theme.AppThemeColors
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -22,15 +23,16 @@ fun AppDrawer(
     onNavigate: (String) -> Unit,
     content: @Composable () -> Unit
 ) {
+    val appColors = AppThemeColors.colors
+
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            // Drawer content
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(320.dp)
-                    .background(MaterialTheme.colorScheme.surface)
+                    .background(appColors.barBackground)
                     .padding(16.dp)
             ) {
                 // Header
@@ -44,50 +46,86 @@ fun AppDrawer(
                         text = "SaleTracker",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
+                        color = appColors.barContent
                     )
+
                     Text(
                         text = "User: $currentUserId",
                         fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = appColors.barContent.copy(alpha = 0.75f)
                     )
                 }
-                
-                Divider()
-                
+
+                HorizontalDivider(
+                    color = appColors.barContent.copy(alpha = 0.15f)
+                )
+
                 Spacer(modifier = Modifier.height(8.dp))
-                
-                // Drawer Items
+
                 NavigationDrawerItem(
-                    icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
-                    label = { Text("Settings") },
+                    icon = {
+                        Icon(
+                            Icons.Default.Settings,
+                            contentDescription = null,
+                            tint = appColors.barContent
+                        )
+                    },
+                    label = {
+                        Text(
+                            "Settings",
+                            color = appColors.barContent
+                        )
+                    },
                     selected = false,
                     onClick = {
                         scope.launch { drawerState.close() }
                         onNavigate("settings")
                     },
+                    colors = NavigationDrawerItemDefaults.colors(
+                        unselectedContainerColor = appColors.barBackground,
+                        unselectedIconColor = appColors.barContent,
+                        unselectedTextColor = appColors.barContent
+                    ),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 4.dp)
                 )
-                
+
                 NavigationDrawerItem(
-                    icon = { Icon(Icons.Default.Sync, contentDescription = "Sync Now") },
-                    label = { Text("Sync Now") },
+                    icon = {
+                        Icon(
+                            Icons.Default.Sync,
+                            contentDescription = null,
+                            tint = appColors.barContent
+                        )
+                    },
+                    label = {
+                        Text(
+                            "Sync Now",
+                            color = appColors.barContent
+                        )
+                    },
                     selected = false,
                     onClick = {
                         scope.launch { drawerState.close() }
                         onNavigate("sync")
                     },
+                    colors = NavigationDrawerItemDefaults.colors(
+                        unselectedContainerColor = appColors.barBackground,
+                        unselectedIconColor = appColors.barContent,
+                        unselectedTextColor = appColors.barContent
+                    ),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 4.dp)
                 )
-                
+
                 Spacer(modifier = Modifier.weight(1f))
-                
-                Divider()
-                
+
+                HorizontalDivider(
+                    color = appColors.barContent.copy(alpha = 0.15f)
+                )
+
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -97,7 +135,7 @@ fun AppDrawer(
                     Text(
                         text = "Version 1.0.0",
                         fontSize = 11.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = appColors.barContent.copy(alpha = 0.7f)
                     )
                 }
             }

@@ -146,4 +146,6 @@
     <string name="remaining">Remaining</string>
     <string name="paid">Paid</string>
     <string name="all_good">All good! 🎉</string>
+    <string name="enter_valid_amount">Enter valid amount</string>
+    <string name="payment_type_short">Payment</string>
 </resources>

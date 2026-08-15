@@ -17,8 +17,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.hninakari.saletracker.R
-import com.hninakari.saletracker.core.ui.theme.Primary
-import com.hninakari.saletracker.core.ui.theme.TextPrimary
 import com.hninakari.saletracker.data.model.Product
 import com.hninakari.saletracker.data.model.Priority
 
@@ -61,7 +59,7 @@ fun AddToBuyItemDialog(
                 Text(
                     text = stringResource(R.string.add_item_to_buy),
                     fontSize = 18.sp,
-                    color = Primary,
+                    color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold
                 )
                 
@@ -89,8 +87,8 @@ fun AddToBuyItemDialog(
                         },
                         textStyle = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Primary,
-                            unfocusedBorderColor = TextPrimary.copy(alpha = 0.3f)
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
                         ),
                         singleLine = true
                     )
@@ -111,7 +109,7 @@ fun AddToBuyItemDialog(
                                         Text(
                                             "$${String.format("%.2f", product.price)}",
                                             fontSize = 11.sp,
-                                            color = TextPrimary.copy(alpha = 0.5f)
+                                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                                         )
                                     }
                                 },
@@ -131,7 +129,7 @@ fun AddToBuyItemDialog(
                         Text(
                             text = "${stringResource(R.string.selected)}: ${selected.name} - $${String.format("%.2f", selected.price)}",
                             fontSize = 12.sp,
-                            color = Primary,
+                            color = MaterialTheme.colorScheme.primary,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 4.dp)
@@ -153,8 +151,8 @@ fun AddToBuyItemDialog(
                     singleLine = true,
                     textStyle = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Primary,
-                        unfocusedBorderColor = TextPrimary.copy(alpha = 0.3f)
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
                     )
                 )
                 
@@ -163,7 +161,7 @@ fun AddToBuyItemDialog(
                 Text(
                     text = stringResource(R.string.priority),
                     fontSize = 11.sp,
-                    color = TextPrimary.copy(alpha = 0.6f),
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                     modifier = Modifier.fillMaxWidth()
                 )
                 
@@ -189,8 +187,8 @@ fun AddToBuyItemDialog(
                             },
                             modifier = Modifier.weight(1f).height(28.dp),
                             colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = Primary.copy(alpha = 0.2f),
-                                selectedLabelColor = Primary
+                                selectedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+                                selectedLabelColor = MaterialTheme.colorScheme.primary
                             )
                         )
                     }
@@ -207,8 +205,8 @@ fun AddToBuyItemDialog(
                     maxLines = 2,
                     textStyle = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Primary,
-                        unfocusedBorderColor = TextPrimary.copy(alpha = 0.3f)
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
                     )
                 )
                 
@@ -238,7 +236,7 @@ fun AddToBuyItemDialog(
                             }
                         },
                         modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.buttonColors(containerColor = Primary),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Text(stringResource(R.string.add_item), fontSize = 13.sp)
