@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Theme -->
+    <style name="Theme.SaleTracker" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:statusBarColor">#7B1FA2</item>
+        <item name="android:navigationBarColor">#7B1FA2</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <!-- Splash Theme (AppCompat) -->
+    <style name="Theme.SaleTracker.Splash" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:statusBarColor">#7B1FA2</item>
+        <item name="android:navigationBarColor">#7B1FA2</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+</resources>

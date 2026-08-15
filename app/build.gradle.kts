@@ -33,6 +33,8 @@ android {
 }
 
 dependencies {
+    // Splash Screen
+    implementation("androidx.core:core-splashscreen:1.2.0-alpha01")
     implementation("androidx.compose.foundation:foundation:1.7.0")
     // Android / Compose
     implementation("androidx.activity:activity-compose:1.10.0")

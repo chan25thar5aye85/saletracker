@@ -25,10 +25,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // -----------------------------------------------------
         // Edge-to-edge
-        // -----------------------------------------------------
-
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -37,37 +34,21 @@ class MainActivity : ComponentActivity() {
             )
         }
 
-        // -----------------------------------------------------
         // Language
-        // -----------------------------------------------------
-
         val languageCode = LanguageManager.getLanguage(this)
         LanguageManager.setLocale(this, languageCode)
 
-        // -----------------------------------------------------
         // Application / repositories
-        // -----------------------------------------------------
-
         val application = application as SaleTrackerApplication
-
-        // -----------------------------------------------------
-        // Compose
-        // -----------------------------------------------------
 
         setContent {
 
             AppTheme {
 
-                // System bars use the SAME color as
-                // MaterialTheme.colorScheme.background
                 SystemBarsUpdater()
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-
-                    // IMPORTANT:
-                    // Do NOT use the old Background from Color.kt.
-                    // Use the currently selected theme.
                     color = MaterialTheme.colorScheme.background
                 ) {
 
@@ -88,26 +69,10 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// ============================================================
-// SYSTEM BARS
-// ============================================================
-
 @Composable
 fun SystemBarsUpdater() {
 
     val view = LocalView.current
-
-    // ---------------------------------------------------------
-    // Use the currently selected Material theme colors.
-    //
-    // Therefore:
-    //
-    // Light  -> Light background
-    // Dark   -> Dark background
-    // Purple -> Purple background
-    // Green  -> Green background
-    // ---------------------------------------------------------
-
     val appColors = AppThemeColors.colors
     val barColor = appColors.barBackground
     val contentColor = appColors.barContent
@@ -120,18 +85,8 @@ fun SystemBarsUpdater() {
 
             val color = barColor.toArgb()
 
-            // Status bar
             window.statusBarColor = color
-
-            // Navigation bar
             window.navigationBarColor = color
-
-            // -------------------------------------------------
-            // System bar icon color
-            //
-            // Dark background -> white icons
-            // Light background -> dark icons
-            // -------------------------------------------------
 
             val controller = WindowCompat.getInsetsController(
                 window,

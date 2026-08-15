@@ -10,6 +10,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.activity.compose.BackHandler
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hninakari.saletracker.R
 import com.hninakari.saletracker.SaleTrackerApplication
@@ -238,6 +239,62 @@ fun AppNavigation(
         transferViewModel.addTransfer(transfer)
     }
 
+    // ============================================================
+    // HANDLE SYSTEM BACK BUTTON
+    // ============================================================
+    
+    // Function to handle back navigation
+    fun handleBack() {
+        when {
+            navState.showTransferHistory.value -> {
+                navState.showTransferHistory.value = false
+            }
+            navState.showExpenseHistory.value -> {
+                navState.showExpenseHistory.value = false
+            }
+            navState.showSalesHistory.value -> {
+                navState.showSalesHistory.value = false
+            }
+            navState.showOrderHistory.value -> {
+                navState.showOrderHistory.value = false
+            }
+            navState.showOrderList.value -> {
+                navState.showOrderList.value = false
+            }
+            navState.showToBuyScreen.value -> {
+                navState.showToBuyScreen.value = false
+                navState.selectedToBuyItemIds.value = emptyList()
+            }
+            navState.showPurchaseHistory.value -> {
+                navState.showPurchaseHistory.value = false
+            }
+            navState.currentScreen.value == "person_detail" -> {
+                navState.currentScreen.value = "main"
+                navState.selectedPerson.value = null
+                navState.selectedTab.value = 3
+            }
+            navState.currentScreen.value == "debt_list" -> {
+                navState.currentScreen.value = "main"
+                navState.selectedTab.value = 3
+            }
+            navState.currentScreen.value == "payment_history" -> {
+                navState.currentScreen.value = "person_detail"
+                navState.selectedDebtId.value = null
+            }
+            navState.showSettings.value -> {
+                navState.showSettings.value = false
+            }
+            else -> {
+                // If none of the above, do nothing or exit app
+            }
+        }
+    }
+
+    // Register back handler
+    BackHandler(enabled = showBackButton || navState.showSettings.value) {
+        handleBack()
+    }
+
     // Main Drawer + App
     AppDrawer(
         drawerState = drawerState,
@@ -255,43 +312,7 @@ fun AppNavigation(
                     subtitle = screenSubtitle,
                     showBack = showBackButton,
                     onBack = {
-                        when {
-                            navState.showTransferHistory.value -> {
-                                navState.showTransferHistory.value = false
-                            }
-                            navState.showExpenseHistory.value -> {
-                                navState.showExpenseHistory.value = false
-                            }
-                            navState.showSalesHistory.value -> {
-                                navState.showSalesHistory.value = false
-                            }
-                            navState.showOrderHistory.value -> {
-                                navState.showOrderHistory.value = false
-                            }
-                            navState.showOrderList.value -> {
-                                navState.showOrderList.value = false
-                            }
-                            navState.showToBuyScreen.value -> {
-                                navState.showToBuyScreen.value = false
-                                navState.selectedToBuyItemIds.value = emptyList()
-                            }
-                            navState.showPurchaseHistory.value -> {
-                                navState.showPurchaseHistory.value = false
-                            }
-                            navState.currentScreen.value == "person_detail" -> {
-                                navState.currentScreen.value = "main"
-                                navState.selectedPerson.value = null
-                                navState.selectedTab.value = 3
-                            }
-                            navState.currentScreen.value == "debt_list" -> {
-                                navState.currentScreen.value = "main"
-                                navState.selectedTab.value = 3
-                            }
-                            navState.currentScreen.value == "payment_history" -> {
-                                navState.currentScreen.value = "person_detail"
-                                navState.selectedDebtId.value = null
-                            }
-                        }
+                        handleBack()
                     },
                     showFilter = false,
                     onFilterClick = { },

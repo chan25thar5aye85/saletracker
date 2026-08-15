@@ -15,7 +15,7 @@ class UserPreferences(private val context: Context) {
         private const val KEY_THEME_MODE = "theme_mode"
 
         private const val DEFAULT_USER_ID = "default-user"
-        private const val DEFAULT_THEME_MODE = "dark"
+        private const val DEFAULT_THEME_MODE = "purple"  // Changed from "dark" to "purple"
 
         @Volatile
         private var INSTANCE: UserPreferences? = null

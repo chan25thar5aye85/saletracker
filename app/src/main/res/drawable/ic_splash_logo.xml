@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+    
+    <!-- Outer Glow Circle -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.08"
+        android:pathData="M100,15 C53,15 15,53 15,100 C15,147 53,185 100,185 C147,185 185,147 185,100 C185,53 147,15 100,15 Z"/>
+    
+    <!-- Inner Circle Background -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.2"
+        android:pathData="M100,35 C64,35 35,64 35,100 C35,136 64,165 100,165 C136,165 165,136 165,100 C165,64 136,35 100,35 Z"/>
+    
+    <!-- Shop Building -->
+    <!-- Main Shop Body -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M50,140 L50,85 L100,50 L150,85 L150,140 L50,140 Z"/>
+    
+    <!-- Shop Roof (triangular) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.4"
+        android:pathData="M40,85 L100,45 L160,85 L40,85 Z"/>
+    
+    <!-- Shop Sign Board -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.3"
+        android:pathData="M70,90 L130,90 L130,100 L70,100 Z"/>
+    
+    <!-- Door -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.35"
+        android:pathData="M85,140 L85,115 L115,115 L115,140 L85,140 Z"/>
+    
+    <!-- Left Window -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.25"
+        android:pathData="M58,108 L75,108 L75,125 L58,125 Z"/>
+    
+    <!-- Right Window -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.25"
+        android:pathData="M125,108 L142,108 L142,125 L125,125 Z"/>
+    
+    <!-- Door Handle -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.5"
+        android:pathData="M108,127 L108,132"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"/>
+</vector>
