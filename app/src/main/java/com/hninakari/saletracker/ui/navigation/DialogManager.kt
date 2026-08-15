@@ -5,7 +5,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.activity.ComponentActivity
 import com.hninakari.saletracker.data.model.*
 import com.hninakari.saletracker.ui.screen.*
-import com.hninakari.saletracker.utils.LanguageManager
 import com.hninakari.saletracker.viewmodel.*
 
 @Composable
@@ -20,18 +19,7 @@ fun DialogManager(
     val context = LocalContext.current
     val allDebts by debtViewModel.allDebts.collectAsState(initial = emptyList())
     
-    // Language Dialog
-    if (navState.showLanguageDialog.value) {
-        LanguageSelectionDialog(
-            currentLanguage = LanguageManager.getLanguage(context),
-            onDismiss = { navState.showLanguageDialog.value = false },
-            onLanguageSelected = { languageCode ->
-                LanguageManager.setLanguage(context, languageCode)
-                (context as? ComponentActivity)?.recreate()
-                navState.showLanguageDialog.value = false
-            }
-        )
-    }
+    // REMOVED: Language Dialog - now in Settings screen
     
     // Add Person Dialog
     if (navState.showAddPersonDialog.value) {

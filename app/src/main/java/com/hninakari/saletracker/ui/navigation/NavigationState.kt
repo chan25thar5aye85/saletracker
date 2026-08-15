@@ -42,7 +42,7 @@ class NavigationState {
     val showPaymentDialog = mutableStateOf(false)
     val showMarkAsBoughtDialog = mutableStateOf(false)
     val showNewOrderDialog = mutableStateOf(false)
-    val showLanguageDialog = mutableStateOf(false)
+    // REMOVED: showLanguageDialog - now in Settings
     val showFilterDropdown = mutableStateOf(false)
     val showSettings = mutableStateOf(false)
     

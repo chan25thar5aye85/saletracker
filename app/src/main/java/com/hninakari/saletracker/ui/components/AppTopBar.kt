@@ -1,6 +1,9 @@
 package com.hninakari.saletracker.ui.components
 
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
@@ -8,6 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hninakari.saletracker.core.ui.theme.AppThemeColors
 import com.hninakari.saletracker.utils.DateUtils
@@ -38,19 +42,25 @@ fun AppTopBar(
 
     TopAppBar(
         title = {
-            Column {
+            // Title and subtitle in a single ROW
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+            ) {
                 Text(
                     text = title,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = contentColor
+                    color = contentColor,
+                    maxLines = 1
                 )
 
                 if (subtitle.isNotEmpty()) {
                     Text(
                         text = subtitle,
                         fontSize = 12.sp,
-                        color = contentColor.copy(alpha = 0.6f)
+                        color = contentColor.copy(alpha = 0.6f),
+                        maxLines = 1
                     )
                 }
             }

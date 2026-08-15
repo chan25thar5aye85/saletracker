@@ -337,6 +337,8 @@ fun AppNavigation(
                     when (page) {
                         0 -> {
                             SaleEntryScreen(
+                                saleViewModel = saleViewModel,
+                                
                                 onSaleAdded = onAddSaleSuccess
                             )
                         }
