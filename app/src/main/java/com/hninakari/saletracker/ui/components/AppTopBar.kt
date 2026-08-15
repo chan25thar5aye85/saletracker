@@ -24,14 +24,10 @@ fun AppTopBar(
     filterExpanded: Boolean = false,
     onFilterSelected: (DateUtils.DateFilter) -> Unit = {},
     currentFilter: DateUtils.DateFilter = DateUtils.DateFilter.TODAY,
-    showLanguage: Boolean = false,
-    onLanguageClick: () -> Unit = {},
     showAddPerson: Boolean = false,
     onAddPersonClick: () -> Unit = {},
     showAddDebt: Boolean = false,
     onAddDebtClick: () -> Unit = {},
-    showSettings: Boolean = false,
-    onSettingsClick: () -> Unit = {},
     showMenu: Boolean = true,
     onMenuClick: () -> Unit = {}
 ) {
@@ -91,16 +87,6 @@ fun AppTopBar(
                 }
             }
 
-            if (showLanguage) {
-                IconButton(onClick = onLanguageClick) {
-                    Icon(
-                        Icons.Default.Language,
-                        contentDescription = "Language",
-                        tint = contentColor
-                    )
-                }
-            }
-
             if (showAddPerson) {
                 IconButton(onClick = onAddPersonClick) {
                     Icon(
@@ -116,16 +102,6 @@ fun AppTopBar(
                     Icon(
                         Icons.Default.Add,
                         contentDescription = "Add Debt",
-                        tint = contentColor
-                    )
-                }
-            }
-
-            if (showSettings) {
-                IconButton(onClick = onSettingsClick) {
-                    Icon(
-                        Icons.Default.Settings,
-                        contentDescription = "Settings",
                         tint = contentColor
                     )
                 }

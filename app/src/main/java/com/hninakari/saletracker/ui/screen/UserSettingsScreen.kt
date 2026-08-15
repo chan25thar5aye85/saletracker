@@ -1,5 +1,7 @@
 package com.hninakari.saletracker.ui.screen
 
+import android.content.Context
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -11,10 +13,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hninakari.saletracker.core.ui.theme.AppThemeColors
+import com.hninakari.saletracker.utils.LanguageManager
 
 private fun Modifier.uniformCard(): Modifier =
     this.shadow(
@@ -41,6 +45,13 @@ fun UserSettingsScreen(
     }
 
     val appColors = AppThemeColors.colors
+    val context = LocalContext.current
+    
+    // Get current language
+    val currentLanguage = remember { LanguageManager.getLanguage(context) }
+    var selectedLanguage by remember(currentLanguage) {
+        mutableStateOf(currentLanguage)
+    }
 
     Scaffold(
         topBar = {
@@ -116,10 +127,6 @@ fun UserSettingsScreen(
                         )
                     )
 
-                    // =================================================
-                    // THEME SELECTOR
-                    // =================================================
-
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -168,6 +175,83 @@ fun UserSettingsScreen(
                                 else -> "Dark Solarized"
                             }
                         }",
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier
+                            .padding(top = 8.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
+                }
+            }
+
+            // ====================================================
+            // LANGUAGE CARD
+            // ====================================================
+
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .uniformCard(),
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                )
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+
+                    Text(
+                        text = "🌐 Language",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+
+                    Text(
+                        text = "Select your preferred language",
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(
+                            top = 4.dp,
+                            bottom = 12.dp
+                        )
+                    )
+
+                    // Language options
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        // Myanmar option
+                        LanguageOption(
+                            label = "🇲🇲 မြန်မာ (Myanmar)",
+                            isSelected = selectedLanguage == LanguageManager.MYANMAR,
+                            onClick = {
+                                selectedLanguage = LanguageManager.MYANMAR
+                                LanguageManager.setLanguage(context, LanguageManager.MYANMAR)
+                                // Restart activity to apply language change
+                                (context as? androidx.activity.ComponentActivity)?.recreate()
+                            }
+                        )
+
+                        // English option
+                        LanguageOption(
+                            label = "🇬🇧 English",
+                            isSelected = selectedLanguage == LanguageManager.ENGLISH,
+                            onClick = {
+                                selectedLanguage = LanguageManager.ENGLISH
+                                LanguageManager.setLanguage(context, LanguageManager.ENGLISH)
+                                // Restart activity to apply language change
+                                (context as? androidx.activity.ComponentActivity)?.recreate()
+                            }
+                        )
+                    }
+
+                    Text(
+                        text = "Current: ${LanguageManager.getCurrentLanguageDisplay(selectedLanguage)}",
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier
@@ -398,6 +482,27 @@ fun UserSettingsScreen(
                             Arrangement.SpaceBetween
                     ) {
                         Text(
+                            text = "Language:",
+                            color =
+                                MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+
+                        Text(
+                            text = LanguageManager.getCurrentLanguageDisplay(selectedLanguage),
+                            fontWeight = FontWeight.Medium,
+                            color =
+                                MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 4.dp),
+                        horizontalArrangement =
+                            Arrangement.SpaceBetween
+                    ) {
+                        Text(
                             text = "Status:",
                             color =
                                 MaterialTheme.colorScheme.onSurfaceVariant
@@ -525,6 +630,58 @@ fun ThemeButton(
                 fontSize = 12.sp,
                 maxLines = 1
             )
+        }
+    }
+}
+
+// ================================================================
+// LANGUAGE OPTION
+// ================================================================
+
+@Composable
+fun LanguageOption(
+    label: String,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = if (isSelected) {
+                MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
+            } else {
+                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+            }
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = label,
+                fontSize = 14.sp,
+                color = if (isSelected) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.onSurface
+                },
+                fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
+            )
+
+            if (isSelected) {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = "Selected",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
         }
     }
 }

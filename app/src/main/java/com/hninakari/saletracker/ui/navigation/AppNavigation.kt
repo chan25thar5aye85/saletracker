@@ -289,11 +289,6 @@ fun AppNavigation(
                     filterExpanded = false,
                     onFilterSelected = { },
                     currentFilter = saleViewModel.selectedFilter.value,
-                    showLanguage = (actualPage == 0 || actualPage == 3 || actualPage == 4) &&
-                            !isDetailScreen && !isToBuyOrHistory && !isOrderScreen,
-                    onLanguageClick = {
-                        navState.showLanguageDialog.value = true
-                    },
                     showAddPerson = actualPage == 3 && !isDetailScreen,
                     onAddPersonClick = {
                         navState.showAddPersonDialog.value = true
@@ -302,11 +297,6 @@ fun AppNavigation(
                             navState.selectedPerson.value != null,
                     onAddDebtClick = {
                         navState.showAddDebtDialog.value = true
-                    },
-                    showSettings = (actualPage == 3 || actualPage == 4) &&
-                            !isDetailScreen && !isToBuyOrHistory && !isOrderScreen,
-                    onSettingsClick = {
-                        navState.showSettings.value = true
                     },
                     showMenu = !showBackButton && !isDetailScreen && !isToBuyOrHistory && !isOrderScreen,
                     onMenuClick = {
