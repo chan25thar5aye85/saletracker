@@ -1,10 +1,13 @@
 package com.hninakari.saletracker.ui.navigation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -12,9 +15,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.layout.navigationBars
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hninakari.saletracker.R
 import com.hninakari.saletracker.SaleTrackerApplication
@@ -52,24 +55,14 @@ fun AppNavigation(
     val currentUserId by userPrefs.userId.collectAsState()
     val currentTheme by userPrefs.themeMode.collectAsState()
 
-    // Settings Screen
-    if (navState.showSettings.value) {
-        UserSettingsScreen(
-            currentUserId = currentUserId,
-            currentTheme = currentTheme,
-            onSaveUserId = { userId ->
-                userPrefs.saveUserId(userId)
-                application?.stopRealtimeListening()
-                application?.startRealtimeListening()
-            },
-            onThemeChange = { theme ->
-                userPrefs.saveThemeMode(theme)
-            },
-            onBack = {
-                navState.showSettings.value = false
-            }
-        )
-        return
+    // Drawer state
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+
+    LaunchedEffect(currentUserId) {
+        if (currentUserId.isNotEmpty() && currentUserId != "default-user") {
+            application?.startRealtimeListening()
+        }
     }
 
     val saleViewModel: SaleViewModel = viewModel(factory = SaleViewModelFactory(saleRepository))
@@ -89,6 +82,51 @@ fun AppNavigation(
     val profitViewModel: ProfitViewModel = viewModel(
         factory = ProfitViewModelFactory(saleRepository, expenseRepository, transferRepository)
     )
+
+    // Handle drawer navigation
+    fun handleDrawerNavigation(destination: String) {
+        when (destination) {
+            "settings" -> {
+                navState.showSettings.value = true
+            }
+            "sync" -> {
+                application?.let {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            it.syncManager.syncAll()
+                        } catch (e: Exception) {
+                            // Handle error
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Handle tab selection from drawer
+    fun handleTabSelection(tab: Int) {
+        navState.selectedTab.value = tab
+    }
+
+    // Settings Screen
+    if (navState.showSettings.value) {
+        UserSettingsScreen(
+            currentUserId = currentUserId,
+            currentTheme = currentTheme,
+            onSaveUserId = { userId ->
+                userPrefs.saveUserId(userId)
+                application?.stopRealtimeListening()
+                application?.startRealtimeListening()
+            },
+            onThemeChange = { theme ->
+                userPrefs.saveThemeMode(theme)
+            },
+            onBack = {
+                navState.showSettings.value = false
+            }
+        )
+        return
+    }
 
     val dateFormat = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())
     val currentDate = dateFormat.format(Date())
@@ -173,6 +211,7 @@ fun AppNavigation(
         navState.currentScreen.value == "person_debt_history" && navState.selectedPerson.value != null ->
             "📜 ${navState.selectedPerson.value?.name} History"
         navState.currentScreen.value == "payment_history" -> "Payment History"
+        navState.currentScreen.value == "products" -> "📦 Products"
         navState.showToBuyScreen.value -> "To Buy"
         navState.showPurchaseHistory.value -> "Purchase History"
         navState.showOrderList.value -> "Orders"
@@ -211,6 +250,10 @@ fun AppNavigation(
         when {
             navState.currentScreen.value == "person_debt_history" -> {
                 navState.currentScreen.value = "person_detail"
+            }
+            navState.currentScreen.value == "products" -> {
+                navState.currentScreen.value = "main"
+                navState.selectedTab.value = 4
             }
             navState.showTransferHistory.value -> {
                 navState.showTransferHistory.value = false
@@ -294,6 +337,19 @@ fun AppNavigation(
                     debtViewModel = debtViewModel,
                     onBack = {
                         navState.currentScreen.value = "person_detail"
+                    }
+                )
+            }
+            navState.currentScreen.value == "products" -> {
+                ProductListScreen(
+                    viewModel = productViewModel,
+                    onAddProduct = {
+                        navState.selectedProduct.value = null
+                        navState.showAddProductDialog.value = true
+                    },
+                    onEditProduct = { product ->
+                        navState.selectedProduct.value = product
+                        navState.showAddProductDialog.value = true
                     }
                 )
             }
@@ -384,6 +440,37 @@ fun AppNavigation(
         }
 
         // ============================================================
+        // PAGE INDICATOR DOTS
+        // ============================================================
+        
+        if (!isDetailScreen && !isToBuyOrHistory && !isOrderScreen && !isSalesHistory && !isExpenseHistory && !isTransferHistory) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 80.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                repeat(TOTAL_TABS) { index ->
+                    val isSelected = index == actualPage
+                    Box(
+                        modifier = Modifier
+                            .size(if (isSelected) 10.dp else 8.dp)
+                            .padding(2.dp)
+                            .background(
+                                color = if (isSelected) 
+                                    MaterialTheme.colorScheme.primary 
+                                else 
+                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
+                                shape = CircleShape
+                            )
+                    )
+                }
+            }
+        }
+
+        // ============================================================
         // DRAGGABLE MENU FAB
         // ============================================================
         
@@ -410,6 +497,9 @@ fun AppNavigation(
                         "tobuy" -> {
                             navState.selectedTab.value = 4
                             navState.currentScreen.value = "main"
+                        }
+                        "products" -> {
+                            navState.currentScreen.value = "products"
                         }
                         "debts" -> {
                             navState.currentScreen.value = "debt_list"

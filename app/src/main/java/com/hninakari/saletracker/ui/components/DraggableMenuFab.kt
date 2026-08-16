@@ -54,6 +54,7 @@ fun DraggableMenuFab(
         MenuItem("transfer", Icons.Default.SwapHoriz, "Transfer"),
         MenuItem("people", Icons.Default.People, "People"),
         MenuItem("tobuy", Icons.Default.ShoppingCart, "To Buy"),
+        MenuItem("products", Icons.Default.Inventory, "Products"),
         MenuItem("debts", Icons.Default.Money, "Debts"),
         MenuItem("settings", Icons.Default.Settings, "Settings")
     )
