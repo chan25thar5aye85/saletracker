@@ -15,7 +15,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
@@ -34,9 +33,28 @@ fun PersonListScreen(
     onPersonClick: (Person) -> Unit,
     onAddClick: () -> Unit
 ) {
-    val people by personViewModel.allPeople.collectAsState(initial = emptyList())
+    val allPeople by personViewModel.allPeople.collectAsState(initial = emptyList())
     val colorScheme = MaterialTheme.colorScheme
     val scope = rememberCoroutineScope()
+    
+    // Search state
+    var searchQuery by remember { mutableStateOf("") }
+    var showArchived by remember { mutableStateOf(false) }
+    
+    // Filter people based on search and archived status
+    val filteredPeople = remember(allPeople, searchQuery, showArchived) {
+        allPeople.filter { person ->
+            val matchesSearch = searchQuery.isEmpty() || 
+                person.name.lowercase().contains(searchQuery.lowercase()) ||
+                person.phone.contains(searchQuery)
+            val matchesArchive = if (showArchived) {
+                person.isDeleted
+            } else {
+                !person.isDeleted
+            }
+            matchesSearch && matchesArchive
+        }
+    }
 
     // FAB position state
     var fabOffsetX by remember { mutableStateOf(0f) }
@@ -55,10 +73,59 @@ fun PersonListScreen(
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = colorScheme.onSurface,
-                modifier = Modifier.padding(bottom = 16.dp)
+                modifier = Modifier.padding(bottom = 8.dp)
             )
+            
+            // Search Bar
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                placeholder = { Text("Search people...") },
+                leadingIcon = {
+                    Icon(Icons.Default.Search, contentDescription = "Search")
+                },
+                trailingIcon = {
+                    if (searchQuery.isNotEmpty()) {
+                        IconButton(onClick = { searchQuery = "" }) {
+                            Icon(Icons.Default.Close, contentDescription = "Clear")
+                        }
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                singleLine = true,
+                shape = RoundedCornerShape(12.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = colorScheme.primary,
+                    unfocusedBorderColor = colorScheme.onSurface.copy(alpha = 0.3f)
+                )
+            )
+            
+            // Show archived toggle
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Show archived: ${if (showArchived) "✅" else "❌"}",
+                    fontSize = 14.sp,
+                    color = colorScheme.onSurfaceVariant
+                )
+                Switch(
+                    checked = showArchived,
+                    onCheckedChange = { showArchived = it },
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = colorScheme.primary,
+                        checkedTrackColor = colorScheme.primary.copy(alpha = 0.5f)
+                    )
+                )
+            }
 
-            if (people.isEmpty()) {
+            Spacer(modifier = Modifier.height(8.dp))
+
+            if (filteredPeople.isEmpty()) {
                 // Empty state
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -75,25 +142,28 @@ fun PersonListScreen(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = "No people yet",
+                            text = if (searchQuery.isNotEmpty()) "No results found" else "No people yet",
                             fontSize = 16.sp,
                             color = colorScheme.onSurface.copy(alpha = 0.6f)
                         )
-                        Text(
-                            text = "Tap + to add someone",
-                            fontSize = 14.sp,
-                            color = colorScheme.onSurface.copy(alpha = 0.4f)
-                        )
+                        if (searchQuery.isEmpty()) {
+                            Text(
+                                text = "Tap + to add someone",
+                                fontSize = 14.sp,
+                                color = colorScheme.onSurface.copy(alpha = 0.4f)
+                            )
+                        }
                     }
                 }
             } else {
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(people) { person ->
+                    items(filteredPeople) { person ->
                         PersonCard(
                             person = person,
-                            onClick = { onPersonClick(person) }
+                            onClick = { onPersonClick(person) },
+                            showArchived = showArchived
                         )
                     }
                 }
@@ -161,21 +231,26 @@ fun PersonListScreen(
 @Composable
 fun PersonCard(
     person: Person,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    showArchived: Boolean
 ) {
     val colorScheme = MaterialTheme.colorScheme
+    val isArchived = person.isDeleted
     
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() }
             .shadow(
-                elevation = 2.dp,
+                elevation = if (isArchived) 1.dp else 2.dp,
                 shape = RoundedCornerShape(12.dp)
             ),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = colorScheme.surface
+            containerColor = if (isArchived) 
+                colorScheme.surfaceVariant.copy(alpha = 0.5f) 
+            else 
+                colorScheme.surface
         )
     ) {
         Row(
@@ -189,7 +264,10 @@ fun PersonCard(
                 modifier = Modifier
                     .size(48.dp)
                     .background(
-                        color = colorScheme.primary.copy(alpha = 0.15f),
+                        color = if (isArchived) 
+                            colorScheme.onSurface.copy(alpha = 0.2f)
+                        else 
+                            colorScheme.primary.copy(alpha = 0.15f),
                         shape = CircleShape
                     ),
                 contentAlignment = Alignment.Center
@@ -198,7 +276,10 @@ fun PersonCard(
                     text = person.name.take(1).uppercase(),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = colorScheme.primary
+                    color = if (isArchived) 
+                        colorScheme.onSurface.copy(alpha = 0.4f)
+                    else 
+                        colorScheme.primary
                 )
             }
 
@@ -208,12 +289,34 @@ fun PersonCard(
             Column(
                 modifier = Modifier.weight(1f)
             ) {
-                Text(
-                    text = person.name,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = colorScheme.onSurface
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = person.name,
+                        fontSize = 16.sp,
+                        fontWeight = if (isArchived) FontWeight.Normal else FontWeight.SemiBold,
+                        color = if (isArchived) 
+                            colorScheme.onSurface.copy(alpha = 0.5f)
+                        else 
+                            colorScheme.onSurface
+                    )
+                    
+                    if (isArchived) {
+                        Text(
+                            text = "📦 Archived",
+                            fontSize = 10.sp,
+                            color = colorScheme.onSurfaceVariant,
+                            modifier = Modifier
+                                .background(
+                                    color = colorScheme.onSurface.copy(alpha = 0.1f),
+                                    shape = RoundedCornerShape(4.dp)
+                                )
+                                .padding(horizontal = 6.dp, vertical = 2.dp)
+                        )
+                    }
+                }
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically
@@ -225,7 +328,10 @@ fun PersonCard(
                             PersonType.OTHER -> "👤 Other"
                         },
                         fontSize = 13.sp,
-                        color = colorScheme.onSurface.copy(alpha = 0.6f)
+                        color = if (isArchived)
+                            colorScheme.onSurface.copy(alpha = 0.4f)
+                        else
+                            colorScheme.onSurface.copy(alpha = 0.6f)
                     )
 
                     if (person.phone.isNotEmpty()) {
@@ -233,7 +339,10 @@ fun PersonCard(
                         Text(
                             text = "• ${person.phone}",
                             fontSize = 13.sp,
-                            color = colorScheme.onSurface.copy(alpha = 0.5f)
+                            color = if (isArchived)
+                                colorScheme.onSurface.copy(alpha = 0.3f)
+                            else
+                                colorScheme.onSurface.copy(alpha = 0.5f)
                         )
                     }
                 }
@@ -243,7 +352,10 @@ fun PersonCard(
             Icon(
                 Icons.Default.ChevronRight,
                 contentDescription = null,
-                tint = colorScheme.onSurface.copy(alpha = 0.3f),
+                tint = if (isArchived)
+                    colorScheme.onSurface.copy(alpha = 0.2f)
+                else
+                    colorScheme.onSurface.copy(alpha = 0.3f),
                 modifier = Modifier.size(24.dp)
             )
         }

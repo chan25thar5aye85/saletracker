@@ -1,6 +1,7 @@
 package com.hninakari.saletracker.ui.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -9,8 +10,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -28,6 +28,7 @@ import com.hninakari.saletracker.data.model.Debt
 import com.hninakari.saletracker.data.model.DebtType
 import com.hninakari.saletracker.data.model.Person
 import com.hninakari.saletracker.viewmodel.DebtViewModel
+import com.hninakari.saletracker.viewmodel.PersonViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -38,15 +39,21 @@ import kotlin.math.roundToInt
 fun PersonDetailScreen(
     person: Person,
     debtViewModel: DebtViewModel,
+    personViewModel: PersonViewModel,
     onBack: () -> Unit = {},
     onAddDebt: (Int) -> Unit = {},
     onPayDebt: (Debt) -> Unit = {},
     onPayAllDebt: (Debt) -> Unit = {},
-    onViewHistory: (Person) -> Unit = {}  // Now passes Person object
+    onViewHistory: (Person) -> Unit = {},
+    onEditPerson: (Person) -> Unit = {}
 ) {
     val debts by debtViewModel
         .getActiveDebtsForPerson(person.id)
         .collectAsState(initial = emptyList())
+    
+    // Get all debts including paid for history count
+    val allDebts by debtViewModel.getDebtsForPerson(person.id).collectAsState(initial = emptyList())
+    val paidDebtsCount = allDebts.count { it.isPaid }
 
     val totalOwedToMe = debts
         .filter { it.type == DebtType.OWED_TO_ME }
@@ -60,6 +67,9 @@ fun PersonDetailScreen(
     
     val colorScheme = MaterialTheme.colorScheme
     val scope = rememberCoroutineScope()
+    
+    // Show confirmation dialog
+    var showArchiveDialog by remember { mutableStateOf(false) }
 
     // FAB position states
     var fabOffsetX by remember { mutableStateOf(0f) }
@@ -80,7 +90,7 @@ fun PersonDetailScreen(
                     .padding(bottom = 80.dp)
             ) {
                 // ============================================================
-                // HEADER WITH BACK BUTTON AND TITLE
+                // HEADER WITH BACK BUTTON, TITLE, AND ACTIONS
                 // ============================================================
                 
                 Row(
@@ -108,21 +118,35 @@ fun PersonDetailScreen(
                         )
                     }
                     
-                    // Person type badge
-                    Surface(
-                        shape = RoundedCornerShape(12.dp),
-                        color = colorScheme.primary.copy(alpha = 0.15f)
+                    // Action buttons (Edit and Archive)
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        Text(
-                            text = when (person.type) {
-                                com.hninakari.saletracker.data.model.PersonType.CUSTOMER -> "👤 Customer"
-                                com.hninakari.saletracker.data.model.PersonType.SUPPLIER -> "🏢 Supplier"
-                                com.hninakari.saletracker.data.model.PersonType.OTHER -> "👤 Other"
-                            },
-                            fontSize = 12.sp,
-                            color = colorScheme.primary,
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
-                        )
+                        // Edit button
+                        IconButton(
+                            onClick = { onEditPerson(person) },
+                            modifier = Modifier.size(40.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.Edit,
+                                contentDescription = "Edit Person",
+                                tint = colorScheme.primary,
+                                modifier = Modifier.size(22.dp)
+                            )
+                        }
+                        
+                        // Archive/Unarchive button
+                        IconButton(
+                            onClick = { showArchiveDialog = true },
+                            modifier = Modifier.size(40.dp)
+                        ) {
+                            Icon(
+                                if (person.isDeleted) Icons.Default.Unarchive else Icons.Default.Archive,
+                                contentDescription = if (person.isDeleted) "Unarchive" else "Archive",
+                                tint = if (person.isDeleted) colorScheme.primary else colorScheme.error,
+                                modifier = Modifier.size(22.dp)
+                            )
+                        }
                     }
                 }
 
@@ -233,7 +257,7 @@ fun PersonDetailScreen(
 
                 Spacer(modifier = Modifier.height(6.dp))
 
-                // Net Balance
+                // Net Balance with Debt History count
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -262,9 +286,27 @@ fun PersonDetailScreen(
                         )
 
                         Row(
-                            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
+                            // Debt history count
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                Icon(
+                                    Icons.Default.History,
+                                    contentDescription = "Debt history",
+                                    modifier = Modifier.size(14.dp),
+                                    tint = colorScheme.onSurfaceVariant
+                                )
+                                Text(
+                                    text = "${paidDebtsCount} paid",
+                                    fontSize = 11.sp,
+                                    color = colorScheme.onSurfaceVariant
+                                )
+                            }
+                            
                             val balanceColor =
                                 if (netDebt >= 0) {
                                     colorScheme.primary
@@ -452,6 +494,55 @@ fun PersonDetailScreen(
             }
         }
     }
+    
+    // ============================================================
+    // ARCHIVE/UNARCHIVE CONFIRMATION DIALOG
+    // ============================================================
+    
+    if (showArchiveDialog) {
+        AlertDialog(
+            onDismissRequest = { showArchiveDialog = false },
+            title = {
+                Text(
+                    if (person.isDeleted) "Unarchive Person" else "Archive Person",
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                if (person.isDeleted) {
+                    Text("Unarchive this person and restore them to the active list?")
+                } else {
+                    Text("Archive this person? They will be hidden from the main list but can be viewed in archived mode.")
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        if (person.isDeleted) {
+                            // Unarchive - restore
+                            personViewModel.restorePerson(person.id)
+                        } else {
+                            // Archive - soft delete
+                            personViewModel.deletePerson(person.id)
+                        }
+                        showArchiveDialog = false
+                        onBack()
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (person.isDeleted) colorScheme.primary else colorScheme.error
+                    )
+                ) {
+                    Text(if (person.isDeleted) "Unarchive" else "Archive")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showArchiveDialog = false }) {
+                    Text("Cancel")
+                }
+            },
+            shape = RoundedCornerShape(16.dp)
+        )
+    }
 }
 
 @Composable
@@ -605,7 +696,7 @@ fun DebtItem(
 
             // Progress
             LinearProgressIndicator(
-                progress = progress,
+                progress = { progress },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(4.dp),

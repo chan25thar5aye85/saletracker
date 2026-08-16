@@ -24,6 +24,24 @@ class PersonViewModel(private val repository: PersonRepository) : ViewModel() {
         }
     }
     
+    fun updatePerson(person: Person) {
+        viewModelScope.launch {
+            repository.updatePerson(person)
+        }
+    }
+    
+    fun deletePerson(personId: Int) {
+        viewModelScope.launch {
+            repository.deletePerson(personId)
+        }
+    }
+    
+    fun restorePerson(personId: Int) {
+        viewModelScope.launch {
+            repository.restorePerson(personId)
+        }
+    }
+    
     suspend fun getPersonById(personId: Int): Person? {
         return repository.getPersonById(personId)
     }

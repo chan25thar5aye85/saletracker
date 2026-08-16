@@ -22,4 +22,7 @@ interface PersonDao {
     
     @Query("UPDATE people SET isDeleted = 1 WHERE id = :personId")
     suspend fun softDeletePerson(personId: Int)
+    
+    @Query("UPDATE people SET isDeleted = 0 WHERE id = :personId")
+    suspend fun restorePerson(personId: Int)
 }

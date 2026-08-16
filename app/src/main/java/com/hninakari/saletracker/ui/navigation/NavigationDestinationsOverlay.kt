@@ -39,6 +39,7 @@ fun NavigationDestinationsOverlay(
         PersonDetailScreen(
             person = person,
             debtViewModel = debtViewModel,
+            personViewModel = personViewModel,
             onBack = {
                 navState.currentScreen.value = "main"
                 navState.selectedPerson.value = null
@@ -59,6 +60,11 @@ fun NavigationDestinationsOverlay(
                 // Navigate to person debt history
                 navState.selectedPerson.value = person
                 navState.currentScreen.value = "person_debt_history"
+            },
+            onEditPerson = { person ->
+                // Show edit person dialog
+                navState.selectedPerson.value = person
+                navState.showAddPersonDialog.value = true
             }
         )
         return
@@ -125,6 +131,7 @@ fun NavigationDestinationsOverlay(
                 navState.showAddPersonDialog.value = false
             }
         )
+        return
     }
 
     // ------------------------------------------------------------

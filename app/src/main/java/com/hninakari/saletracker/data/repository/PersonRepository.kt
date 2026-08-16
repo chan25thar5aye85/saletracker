@@ -69,4 +69,9 @@ class PersonRepository(context: Context) {
         personDao.softDeletePerson(personId)
         SyncTrigger.triggerUpload()
     }
+
+    suspend fun restorePerson(personId: Int) {
+        personDao.restorePerson(personId)
+        SyncTrigger.triggerUpload()
+    }
 }
