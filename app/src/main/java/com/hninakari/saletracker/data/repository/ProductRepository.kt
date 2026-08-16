@@ -14,19 +14,29 @@ class ProductRepository(context: Context) {
     private val productDao = database.productDao()
 
     private fun toEntity(product: Product): ProductEntity {
+        // Convert tagIds list to comma-separated string
+        val tagIdsString = product.tagIds.joinToString(",")
         return ProductEntity(
             id = product.id,
             name = product.name,
             price = product.price,
+            tagIds = tagIdsString,
             isDeleted = product.isDeleted
         )
     }
 
     private fun toModel(entity: ProductEntity): Product {
+        // Parse tagIds from comma-separated string
+        val tagIds = if (entity.tagIds.isNotEmpty()) {
+            entity.tagIds.split(",").mapNotNull { it.toIntOrNull() }
+        } else {
+            emptyList()
+        }
         return Product(
             id = entity.id,
             name = entity.name,
             price = entity.price,
+            tagIds = tagIds,
             isDeleted = entity.isDeleted
         )
     }

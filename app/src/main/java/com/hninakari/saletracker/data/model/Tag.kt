@@ -3,10 +3,9 @@ package com.hninakari.saletracker.data.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Product(
+data class Tag(
     val id: Int = 0,
     val name: String,
-    val price: Double,
-    val tagIds: List<Int> = emptyList(),
+    val color: String? = null,
     val isDeleted: Boolean = false
 )

@@ -5,9 +5,15 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.keyframes
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,12 +25,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hninakari.saletracker.R
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -42,6 +51,27 @@ fun DraggableMenuFab(
     var isDragging by remember { mutableStateOf(false) }
     var isMenuExpanded by remember { mutableStateOf(false) }
 
+    // High bouncing-ball idle animation
+    val infiniteTransition = rememberInfiniteTransition(label = "fab_bounce")
+    val bounce by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 0f,
+        animationSpec = infiniteRepeatable(
+            animation = keyframes {
+                durationMillis = 1200
+                0f at 0
+                -70f at 220
+                0f at 440
+                -35f at 620
+                0f at 820
+                -16f at 980
+                0f at 1200
+            },
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "bounce"
+    )
+
     data class MenuItem(
         val id: String,
         val icon: ImageVector,
@@ -55,7 +85,8 @@ fun DraggableMenuFab(
         MenuItem("people", Icons.Default.People, "People"),
         MenuItem("tobuy", Icons.Default.ShoppingCart, "To Buy"),
         MenuItem("products", Icons.Default.Inventory, "Products"),
-        MenuItem("debts", Icons.Default.Money, "Debts"),
+        MenuItem("tags", Icons.Default.Label, "Tags"),
+        MenuItem("debts", Icons.Default.AttachMoney, "Debts"),
         MenuItem("settings", Icons.Default.Settings, "Settings")
     )
 
@@ -69,15 +100,16 @@ fun DraggableMenuFab(
                         fabOffsetY.roundToInt()
                     )
                 }
-                .padding(start = 16.dp, bottom = 24.dp)
+                .padding(start = 16.dp, bottom = 80.dp)
         ) {
+
             AnimatedVisibility(
                 visible = isMenuExpanded,
                 enter = fadeIn() + expandVertically(expandFrom = Alignment.Bottom),
                 exit = fadeOut() + shrinkVertically(shrinkTowards = Alignment.Bottom),
                 modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .padding(bottom = 64.dp)
+                    .align(Alignment.BottomStart)
+                    .padding(bottom = 72.dp)
             ) {
                 Column(
                     modifier = Modifier
@@ -114,7 +146,7 @@ fun DraggableMenuFab(
                         }
 
                         if (index != menuItems.lastIndex) {
-                            Divider(
+                            HorizontalDivider(
                                 modifier = Modifier.padding(horizontal = 8.dp),
                                 color = MaterialTheme.colorScheme.outlineVariant
                             )
@@ -132,9 +164,13 @@ fun DraggableMenuFab(
                 },
                 modifier = Modifier
                     .align(Alignment.BottomStart)
+                    .graphicsLayer {
+                        translationY =
+                            if (!isDragging && !isMenuExpanded) bounce else 0f
+                    }
                     .size(56.dp)
                     .pointerInput(Unit) {
-                        detectDragGesturesAfterLongPress(
+                        detectDragGestures(
                             onDragStart = {
                                 isDragging = true
                                 isMenuExpanded = false
@@ -153,8 +189,10 @@ fun DraggableMenuFab(
                                     repeat(30) { step ->
                                         val t = (step + 1) / 30f
                                         val eased = (1f - t) * (1f - t)
+
                                         fabOffsetX = startX * eased
                                         fabOffsetY = startY * eased
+
                                         delay(10)
                                     }
 
@@ -170,14 +208,18 @@ fun DraggableMenuFab(
                         )
                     },
                 containerColor = MaterialTheme.colorScheme.primary,
-                shape = CircleShape
+                shape = CircleShape,
+                elevation = FloatingActionButtonDefaults.elevation(
+                    defaultElevation = 6.dp
+                )
             ) {
-                Icon(
-                    imageVector = if (isMenuExpanded)
-                        Icons.Default.Close
-                    else
-                        Icons.Default.Menu,
-                    contentDescription = null
+                // Use your custom image
+                Image(
+                    painter = painterResource(id = R.drawable.fab_image),
+                    contentDescription = "Menu",
+                    modifier = Modifier
+                        .size(56.dp)
+                        .clip(CircleShape)
                 )
             }
         }

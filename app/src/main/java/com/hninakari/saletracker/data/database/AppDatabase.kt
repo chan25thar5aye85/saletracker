@@ -12,9 +12,10 @@ import android.content.Context
         TransferEntity::class,
         PersonEntity::class,
         DebtEntity::class,
-        DebtPaymentEntity::class
+        DebtPaymentEntity::class,
+        TagEntity::class
     ],
-    version = 5,
+    version = 6,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -23,6 +24,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun transferDao(): TransferDao
     abstract fun personDao(): PersonDao
     abstract fun debtDao(): DebtDao
+    abstract fun tagDao(): TagDao
 
     companion object {
         @Volatile
